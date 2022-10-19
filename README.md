@@ -1,4 +1,6 @@
 **<h1 align="center">Hash-Cracker</h1>**
+**<p align="center">A go-based application for cracking password</p>**
+
 
 <p>
 -h:                     Shows this message (ignores other arguments)<br>
