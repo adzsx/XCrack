@@ -12,11 +12,3 @@
 -M LENGTH:              max LENGTH of password<br>
 -w PATH:                uses a wordlist in PATH (ignores other arguments)<br>
 </p>
-
-<br>
-<br>
-
-<h>Installation:</h>
-**<a href=""s>Linux</a>**
-**<a href=""s>Windows</a>**
-**<a href=""s>Mac OS (comming soon)</a>**
