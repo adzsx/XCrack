@@ -1,4 +1,4 @@
-<h text-align="center">Hash-Cracker</h>
+**<h1 align="center">Hash-Cracker</h1>**
 
 <p>
 -h:                     Shows this message (ignores other arguments)<br>
@@ -17,6 +17,6 @@
 <br>
 
 <h>Installation:</h>
-<a href=""s>Linux</a>
-<a href=""s>Windows</a>
-<a href=""s>Mac OS (comming soon)</a>
+**<a href=""s>Linux</a>**
+**<a href=""s>Windows</a>**
+**<a href=""s>Mac OS (comming soon)</a>**
