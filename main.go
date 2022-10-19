@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"crypto/md5"
+	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
 	"os"
@@ -63,6 +64,9 @@ func wordlist(password string, type_ string, path string) {
 func hash(form string, text string) string {
 	if form == "md5" {
 		hash := md5.Sum([]byte(text))
+		return hex.EncodeToString(hash[:])
+	} else if form == "sha1" {
+		hash := sha1.Sum([]byte(text))
 		return hex.EncodeToString(hash[:])
 	}
 	return ""
