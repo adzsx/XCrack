@@ -2,6 +2,7 @@
 **<p align="center">A go-based application for cracking password</p>**
 
 
+**Help:**
 <p>
 -h:                     Shows this message (ignores other arguments)<br>
 -p HASH:                (required) Sets the HASH<br>
