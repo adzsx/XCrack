@@ -21,6 +21,8 @@ var (
 	u_letters = [26]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
 	numbers   = [10]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
 	special   = [39]string{"^", "´", "+", "#", "-", "+", ".", "\"", "<", "°", "!", "§", "$", "%", "&", "/", "(", ")", "=", "?", "`", "*", "'", "_", ":", ";", "′", "{", "[", "]", "}", "\\", "¸", "~", "’", "–", "·"}
+	chars     [101]string
+	length    int
 )
 
 func main() {
@@ -28,6 +30,7 @@ func main() {
 	help := "\nBrute forcer cracks hashed passwords:\n------------------------------------------------------------------------------------------\n-h: 			Shows this message (ignores other arguments)\n-p HASH:		(required) Sets the HASH\n-t HASH-TYPE:		(required) specify the HASH-TYPE: (md5, sha1)\n-n: 			numbers\n-l: 			lowercase letters\n-L: 			uppercase letters\n-s: 			special Characters\n-m LENGTH: 		min LENGTH of password\n-M LENGTH: 		max LENGTH of password\n-w PATH:		uses a wordlist in PATH (ignores other arguments)\n------------------------------------------------------------------------------------------\n"
 	args[0] = "Hash-Cracker"
 
+	// check for command line arguments
 	for n, element := range args {
 		if element == "-h" {
 			fmt.Println(help)
@@ -47,31 +50,71 @@ func main() {
 		} else if element == "-L" {
 			included[1] = args[n]
 		} else if element == "-n" {
-			included[0] = args[n]
+			included[2] = args[n]
 		} else if element == "-s" {
-			included[0] = args[n]
+			included[3] = args[n]
 		} else if element == "-m" {
 			included[4] = args[n+1]
 		} else if element == "-M" {
 			included[5] = args[n+1]
-		} else if element != "Hash-Cracker" {
-			fmt.Printf("Unknown flag: %v \n", element)
 		}
 
 	}
+	//start wordlist mode when -w is true
 	if islist {
 		wordlist(password, type_, path)
 		os.Exit(0)
 	} else {
-		brute(included)
+
+		fmt.Println(brute_force(included, password))
 	}
 }
 
-func brute(args [6]string) string {
-	for n, arg := range args {
-		fmt.Printf("%v: %v", n, arg)
+func brute_force(args [6]string, password string) string {
+	if contains(args, "-n") {
+		for n, v := range numbers {
+			chars[n] = v
+		}
+		length += 10
 	}
-	return ""
+	if contains(args, "-l") {
+		for n, v := range l_letters {
+			chars[n+10] = v
+		}
+		length += 26
+	}
+	if contains(args, "-L") {
+		for n, v := range u_letters {
+			chars[n+36] = v
+		}
+		length += 26
+	}
+	if contains(args, "-s") {
+		for n, v := range special {
+			chars[n+62] = v
+		}
+		length += 39
+	}
+	jobs := make(chan int, 50)
+	result := make(chan string, 1)
+
+	go brute(chars, password, length, jobs, result)
+
+	for i := 0; i < 50; i++ {
+		jobs <- i
+	}
+	close(jobs)
+
+	return <-result
+}
+
+func brute(chars [101]string, password string, length int, len <-chan int, result chan<- string) {
+	//chars for building the password
+	//len for jobs wiht different lengths
+	//result for sending the password
+	//length for char length for the for loop
+
+	result <- password
 }
 
 func wordlist(password string, type_ string, path string) {
@@ -106,4 +149,13 @@ func hash(form string, text string) string {
 		return hex.EncodeToString(hash[:])
 	}
 	return ""
+}
+
+func contains(s [6]string, element string) bool {
+	for _, v := range s {
+		if element == v {
+			return true
+		}
+	}
+	return false
 }
