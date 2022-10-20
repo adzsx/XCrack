@@ -100,7 +100,7 @@ func brute_force(args [6]string, password string) string {
 
 	go brute(chars, password, length, jobs, result)
 
-	for i := 0; i < 50; i++ {
+	for i := 1; i <= 50; i++ {
 		jobs <- i
 	}
 	close(jobs)
@@ -108,12 +108,15 @@ func brute_force(args [6]string, password string) string {
 	return <-result
 }
 
-func brute(chars [101]string, password string, length int, len <-chan int, result chan<- string) {
-	//chars for building the password
-	//len for jobs wiht different lengths
-	//result for sending the password
-	//length for char length for the for loop
-
+func brute(chars [101]string, password string, length int, jobs <-chan int, result chan<- string) {
+	//chars = characters for password
+	//password = hashed password to crack
+	//length = length of characters in chars
+	//jobs = jobs for lengths for multiple gorutines
+	//result = channel to send password if found
+	for n := range jobs {
+		fmt.Println(n)
+	}
 	result <- password
 }
 
