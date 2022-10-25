@@ -27,17 +27,61 @@ var (
 	length    int
 
 	help string = `
-Hash mode
-##########################################################################################################
+Ptevo Cracker,
+a tool for common password attacks
 
--h: 			Shows this message (ignores other arguments)
--p HASH:		(required) Sets the HASH\n-t HASH-TYPE:		(required) specify the HASH-TYPE: (md5, sha1)
--n: 			numbers\n-l: 			lowercase letters\n-L: 			uppercase letters
--s: 			special Characters\n-m LENGTH: 		min LENGTH of password
+Modes:
+#############################################################################
+
+hash:			Cracks a given hash with a wordlist or brute force attack
+gen:			Generated a wordlist based on your preferences
+
+#############################################################################
+
+
+
+Hash mode:
+#############################################################################
+
+Presets:
+-p HASH:		(required) Sets the HASH
+-t HASH-TYPE:	(required) specify the HASH-TYPE: (md5, sha1)
+
+Character preferences:
+-n: 			numbers
+-l: 			lowercase letters
+-L: 			uppercase letters
+-s: 			special Characters
+
+Length preferences
+-m LENGTH: 		min LENGTH of password
 -M LENGTH: 		max LENGTH of password
--w PATH:		uses a wordlist in PATH (ignores other arguments)
 
-##########################################################################################################
+Wordlist Preferences:
+-w PATH:		uses a wordlist in PATH instead of character preferences
+
+#############################################################################
+
+
+
+Wordlist generation mode:
+#############################################################################
+
+Presets:
+-f PATH:		Stores wordlist in PATH, cwd is the default
+
+Character preferences:
+-n: 			numbers
+-l: 			lowercase letters
+-L: 			uppercase letters
+-s: 			special Characters
+
+Length preferences
+-m LENGTH: 		min LENGTH of password
+-M LENGTH: 		max LENGTH of password
+
+#############################################################################
+
 `
 
 	start string = `
