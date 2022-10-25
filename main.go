@@ -10,7 +10,9 @@ import (
 )
 
 var (
-	password string
+	mode string
+
+	hashed   string
 	included [6]string
 
 	type_  string
@@ -23,11 +25,38 @@ var (
 	special   = [39]string{"^", "´", "+", "#", "-", "+", ".", "\"", "<", "°", "!", "§", "$", "%", "&", "/", "(", ")", "=", "?", "`", "*", "'", "_", ":", ";", "′", "{", "[", "]", "}", "\\", "¸", "~", "’", "–", "·"}
 	chars     [101]string
 	length    int
+
+	help string = `
+Hash mode
+##########################################################################################################
+
+-h: 			Shows this message (ignores other arguments)
+-p HASH:		(required) Sets the HASH\n-t HASH-TYPE:		(required) specify the HASH-TYPE: (md5, sha1)
+-n: 			numbers\n-l: 			lowercase letters\n-L: 			uppercase letters
+-s: 			special Characters\n-m LENGTH: 		min LENGTH of password
+-M LENGTH: 		max LENGTH of password
+-w PATH:		uses a wordlist in PATH (ignores other arguments)
+
+##########################################################################################################
+`
+
+	start string = `
+############################################
+
+┏━━━┓┏┓                      ┏┓
+┃┏━┓┣┛┗┓                     ┃┃
+┃┗━┛┣┓┏╋━━┳┓┏┳━━┓ ┏━━┳━┳━━┳━━┫┃┏┳━━┳━┓
+┃┏━━┛┃┃┃┃━┫┗┛┃┏┓┃ ┃┏━┫┏┫┏┓┃┏━┫┗┛┫┃━┫┏┛
+┃┃   ┃┗┫┃━╋┓┏┫┗┛┃ ┃┗━┫┃┃┏┓┃┗━┫┏┓┫┃━┫┃
+┗┛   ┗━┻━━┛┗┛┗━━┛ ┗━━┻┛┗┛┗┻━━┻┛┗┻━━┻┛
+
+############################################
+`
 )
 
 func main() {
+	fmt.Println(start)
 	args := os.Args
-	help := "\nBrute forcer cracks hashed passwords:\n------------------------------------------------------------------------------------------\n-h: 			Shows this message (ignores other arguments)\n-p HASH:		(required) Sets the HASH\n-t HASH-TYPE:		(required) specify the HASH-TYPE: (md5, sha1)\n-n: 			numbers\n-l: 			lowercase letters\n-L: 			uppercase letters\n-s: 			special Characters\n-m LENGTH: 		min LENGTH of password\n-M LENGTH: 		max LENGTH of password\n-w PATH:		uses a wordlist in PATH (ignores other arguments)\n------------------------------------------------------------------------------------------\n"
 	args[0] = "Hash-Cracker"
 
 	// check for command line arguments
@@ -40,7 +69,7 @@ func main() {
 			type_ = args[n+1]
 
 		} else if element == "-p" {
-			password = args[n+1]
+			hashed = args[n+1]
 
 		} else if element == "-w" {
 			path = args[n+1]
@@ -62,11 +91,11 @@ func main() {
 	}
 	//start wordlist mode when -w is true
 	if islist {
-		wordlist(password, type_, path)
+		wordlist(hashed, type_, path)
 		os.Exit(0)
 	} else {
 
-		fmt.Println(brute_force(included, password))
+		fmt.Println(brute_force(included, hashed))
 	}
 }
 
@@ -108,20 +137,28 @@ func brute_force(args [6]string, password string) string {
 	return <-result
 }
 
-func brute(chars [101]string, password string, length int, jobs <-chan int, result chan<- string) {
+func brute(chars [101]string, hashed string, length int, jobs <-chan int, result chan<- string) {
 	//chars = characters for password
-	//password = hashed password to crack
+	//hashed = hashed password to crack
 	//length = length of characters in chars
 	//jobs = jobs for lengths for multiple gorutines
 	//result = channel to send password if found
-	for n := range jobs {
-		fmt.Println(n)
+
+	fmt.Println("Starting brute force mode")
+	for currentLength := range jobs {
+		fmt.Printf("Starting with length: %v\n", currentLength)
+
+		for i := 0; i < currentLength; i++ {
+
+		}
+
 	}
-	result <- password
+
+	result <- hashed
 }
 
 func wordlist(password string, type_ string, path string) {
-	fmt.Println("Starting Wordlist mode...")
+	fmt.Println("Starting Wordlist mode")
 	file, err := os.Open(path)
 	if err != nil {
 		fmt.Printf("Path \"%v\" found. Plase enter a valid path!\n", path)
