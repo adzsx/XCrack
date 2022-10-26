@@ -35,64 +35,57 @@ Modes:
 
 hash:			Cracks a given hash with a wordlist or brute force attack
 gen:			Generated a wordlist based on your preferences
+login:			Cracks a login on a website
+
+(mode has to be the first argument)
 
 -----------------------------------------------------------------------------
 
 
 
 Hash mode:
------------------------------------------------------------------------------
+	Presets:
+		-p HASH:		(required) Sets the HASH
+		-t HASH-TYPE:	(required) specify the HASH-TYPE: (md5, sha1)
 
-Presets:
--p HASH:		(required) Sets the HASH
--t HASH-TYPE:	(required) specify the HASH-TYPE: (md5, sha1)
+	Character preferences:
+		-n: 			numbers
+		-l: 			lowercase letters
+		-L: 			uppercase letters
+		-s: 			special Characters
 
-Character preferences:
--n: 			numbers
--l: 			lowercase letters
--L: 			uppercase letters
--s: 			special Characters
+	Length preferences
+		-m LENGTH: 		min LENGTH of password
+		-M LENGTH: 		max LENGTH of password
 
-Length preferences
--m LENGTH: 		min LENGTH of password
--M LENGTH: 		max LENGTH of password
+	Wordlist Preferences:
+		-w PATH:		uses a wordlist in PATH instead of character preferences
 
-Wordlist Preferences:
--w PATH:		uses a wordlist in PATH instead of character preferences
-
------------------------------------------------------------------------------
 
 
 
 Wordlist generation mode:
------------------------------------------------------------------------------
+	Presets:
+		-f PATH:		Stores wordlist in PATH, cwd is the default
 
-Presets:
--f PATH:		Stores wordlist in PATH, cwd is the default
+	Character preferences:
+		-n: 			numbers
+		-l: 			lowercase letters
+		-L: 			uppercase letters
+		-s: 			special Characters
 
-Character preferences:
--n: 			numbers
--l: 			lowercase letters
--L: 			uppercase letters
--s: 			special Characters
-
-Length preferences
--m LENGTH: 		min LENGTH of password
--M LENGTH: 		max LENGTH of password
-
------------------------------------------------------------------------------
+	Length preferences
+		-m LENGTH: 		min LENGTH of password
+		-M LENGTH: 		max LENGTH of password
 
 `
 
 	start string = `
 ############################################
 
-┏━━━┓┏┓                      ┏┓
-┃┏━┓┣┛┗┓                     ┃┃
-┃┗━┛┣┓┏╋━━┳┓┏┳━━┓ ┏━━┳━┳━━┳━━┫┃┏┳━━┳━┓
-┃┏━━┛┃┃┃┃━┫┗┛┃┏┓┃ ┃┏━┫┏┫┏┓┃┏━┫┗┛┫┃━┫┏┛
-┃┃   ┃┗┫┃━╋┓┏┫┗┛┃ ┃┗━┫┃┃┏┓┃┗━┫┏┓┫┃━┫┃
-┗┛   ┗━┻━━┛┗┛┗━━┛ ┗━━┻┛┗┛┗┻━━┻┛┗┻━━┻┛
+
+▀▄▀ █▀▀ █▀█ █▀█ █▀▀ █▄▀
+█ █ █▄▄ █▀▄ █▀█ █▄▄ █ █
 
 ############################################
 `
@@ -105,33 +98,30 @@ func main() {
 
 	// check for command line arguments
 	for n, element := range args {
-		if element == "-h" {
+		switch element {
+		case "-h":
 			fmt.Println(help)
 			os.Exit(0)
-
-		} else if element == "-t" {
+		case "-t":
 			type_ = args[n+1]
-
-		} else if element == "-p" {
+		case "-p":
 			hashed = args[n+1]
-
-		} else if element == "-w" {
+		case "-w":
 			path = args[n+1]
 			islist = true
-		} else if element == "-l" {
+		case "-l":
 			included[0] = args[n]
-		} else if element == "-L" {
+		case "-L":
 			included[1] = args[n]
-		} else if element == "-n" {
+		case "-n":
 			included[2] = args[n]
-		} else if element == "-s" {
+		case "-s":
 			included[3] = args[n]
-		} else if element == "-m" {
+		case "-m":
 			included[4] = args[n+1]
-		} else if element == "-M" {
+		case "-M":
 			included[5] = args[n+1]
 		}
-
 	}
 	//start wordlist mode when -w is true
 	if islist {
@@ -172,6 +162,9 @@ func brute_force(args [6]string, password string) string {
 	result := make(chan string, 1)
 
 	go brute(chars, password, length, jobs, result)
+	go brute(chars, password, length, jobs, result)
+	go brute(chars, password, length, jobs, result)
+	go brute(chars, password, length, jobs, result)
 
 	for i := 1; i <= 50; i++ {
 		jobs <- i
@@ -190,11 +183,7 @@ func brute(chars [101]string, hashed string, length int, jobs <-chan int, result
 
 	fmt.Println("Starting brute force mode")
 	for currentLength := range jobs {
-		fmt.Printf("Starting with length: %v\n", currentLength)
-
-		for i := 0; i < currentLength; i++ {
-
-		}
+		fmt.Printf("Starting with length: %v,\n %v\n", currentLength, currentLength*length)
 
 	}
 
@@ -225,10 +214,11 @@ func wordlist(password string, type_ string, path string) {
 }
 
 func hash(form string, text string) string {
-	if form == "md5" {
+	switch form {
+	case "md5":
 		hash := md5.Sum([]byte(text))
 		return hex.EncodeToString(hash[:])
-	} else if form == "sha1" {
+	case "sha1":
 		hash := sha1.Sum([]byte(text))
 		return hex.EncodeToString(hash[:])
 	}
