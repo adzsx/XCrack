@@ -105,31 +105,29 @@ func main() {
 
 	// check for command line arguments
 	for n, element := range args {
-		if element == "-h" {
-			fmt.Println(help)
-			os.Exit(0)
-
-		} else if element == "-t" {
-			type_ = args[n+1]
-
-		} else if element == "-p" {
-			hashed = args[n+1]
-
-		} else if element == "-w" {
-			path = args[n+1]
-			islist = true
-		} else if element == "-l" {
-			included[0] = args[n]
-		} else if element == "-L" {
-			included[1] = args[n]
-		} else if element == "-n" {
-			included[2] = args[n]
-		} else if element == "-s" {
-			included[3] = args[n]
-		} else if element == "-m" {
-			included[4] = args[n+1]
-		} else if element == "-M" {
-			included[5] = args[n+1]
+		switch (element) {
+			case "-h":
+				fmt.Println(help)
+				os.Exit(0)
+			case "-t":
+				type_ = args[n+1]
+			case "-p":
+				hashed = args[n+1]
+			case "-w":
+				path = args[n+1]
+				islist = true
+			case "-l":
+				included[0] = args[n]
+			case "-L":
+				included[1] = args[n]
+			case "-n":
+				included[2] = args[n]
+			case "-s":
+				included[3] = args[n]
+			case "-m":
+				included[4] = args[n+1]
+			case "-M":
+				included[5] = args[n+1]
 		}
 
 	}
@@ -225,12 +223,13 @@ func wordlist(password string, type_ string, path string) {
 }
 
 func hash(form string, text string) string {
-	if form == "md5" {
-		hash := md5.Sum([]byte(text))
-		return hex.EncodeToString(hash[:])
-	} else if form == "sha1" {
-		hash := sha1.Sum([]byte(text))
-		return hex.EncodeToString(hash[:])
+	switch (form) {
+		case "md5":
+			hash := md5.Sum([]byte(text))
+			return hex.EncodeToString(hash[:])
+		case "sha1":
+			hash := sha1.Sum([]byte(text))
+			return hex.EncodeToString(hash[:])
 	}
 	return ""
 }
