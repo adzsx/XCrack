@@ -42,7 +42,6 @@ login:			Cracks a login on a website
 -----------------------------------------------------------------------------
 
 
-
 Hash mode:
 	Presets:
 		-p HASH:		(required) Sets the HASH
@@ -60,6 +59,7 @@ Hash mode:
 
 	Wordlist Preferences:
 		-w PATH:		uses a wordlist in PATH instead of character preferences
+
 
 
 
@@ -126,9 +126,12 @@ func main() {
 	if islist {
 		wordlist(hashed, type_, path)
 		os.Exit(0)
-	} else {
-
+	} else if len(args) > 2 {
+		fmt.Println(len(args), args)
 		fmt.Println(brute_force(included, hashed))
+	} else {
+		fmt.Println("Enter -h for help\n ")
+		os.Exit(0)
 	}
 }
 

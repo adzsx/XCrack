@@ -1,3 +1,2 @@
 **<h1 align="center">XCrack</h1>**
-**<p align="center">A go-based application for cracking password</p>**
-<p>The tool can crack hashes, generate wordlists, crack logins on websites and ssh logins</p>
+<p align="center">A go based application for all kinds of password attacks:<br>- Hash cracking<br>- Wordlist generation<br>- Login cracking</p>
