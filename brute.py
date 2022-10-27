@@ -1,7 +1,7 @@
 
 import time
 
-chars = ["a", "b", "c", "d", "e", "f"]
+chars = ["a", "b", "c"]
 pwlen = 2
 
 password = ["", "", "", ""]
@@ -18,7 +18,7 @@ while counter != [3, 3, 3, 3]:
             counter[i] = 0
             counter[i+1] += 1
             continue
-
+    
     for index, value in enumerate(counter):
         password[index] = chars[value]
     
