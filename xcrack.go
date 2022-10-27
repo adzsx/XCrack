@@ -12,58 +12,58 @@ import (
 var (
 	//some strings to display
 	help string = `
-	Ptevo Cracker,
-	a tool for common password attacks
-	
-	Modes:
-	-----------------------------------------------------------------------------
-	
-	hash:			Cracks a given hash with a wordlist or brute force attack
-	gen:			Generated a wordlist based on your preferences
-	login:			Cracks a login on a website
-	
-	(mode has to be the first argument)
-	
-	-----------------------------------------------------------------------------
-	
-	
-	Hash mode:
-		Presets:
-			-p HASH:		(required) Sets the HASH
-			-t HASH-TYPE:	(required) specify the HASH-TYPE: (md5, sha1)
-	
-		Character preferences:
-			-n: 			numbers
-			-l: 			lowercase letters
-			-L: 			uppercase letters
-			-s: 			special Characters
-	
-		Length preferences
-			-m LENGTH: 		min LENGTH of password
-			-M LENGTH: 		max LENGTH of password
-	
-		Wordlist Preferences:
-			-w PATH:		uses a wordlist in PATH instead of character preferences
-	
-	
-	
-	
-	
-	Wordlist generation mode:
-		Presets:
-			-f PATH:		Stores wordlist in PATH, cwd is the default
-	
-		Character preferences:
-			-n: 			numbers
-			-l: 			lowercase letters
-			-L: 			uppercase letters
-			-s: 			special Characters
-	
-		Length preferences
-			-m LENGTH: 		min LENGTH of password
-			-M LENGTH: 		max LENGTH of password
-	
-	`
+Xcrack,
+a tool for common password attacks
+
+Modes:
+-------------------------------------------------------------------------------------
+
+hash:			Cracks a given hash with a wordlist or brute force attack (default)
+gen:			Generated a wordlist based on your preferences
+login:			Cracks a login on a website
+
+(mode has to be the first argument)
+
+-------------------------------------------------------------------------------------
+
+
+Hash mode:
+	Presets:
+		-p HASH:		(required) Sets the HASH
+		-t HASH-TYPE:	(required) specify the HASH-TYPE: (md5, sha1)
+
+	Character preferences:
+		-n: 			numbers
+		-l: 			lowercase letters
+		-L: 			uppercase letters
+		-s: 			special Characters
+
+	Length preferences
+		-m LENGTH: 		min LENGTH of password
+		-M LENGTH: 		max LENGTH of password
+
+	Wordlist Preferences:
+		-w PATH:		uses a wordlist in PATH instead of character preferences
+
+
+
+
+
+Wordlist generation mode:
+	Presets:
+		-f PATH:		Stores wordlist in PATH, cwd is the default
+
+	Character preferences:
+		-n: 			numbers
+		-l: 			lowercase letters
+		-L: 			uppercase letters
+		-s: 			special Characters
+
+	Length preferences
+		-m LENGTH: 		min LENGTH of password
+		-M LENGTH: 		max LENGTH of password
+
+`
 
 	start string = `
 ############################################
@@ -75,7 +75,7 @@ var (
 `
 
 	//mode (help message)
-	mode string
+	mode string = "hash"
 
 	//storing for flags in declaration of app (eg. -l -s, -m x -M y)
 	//password
@@ -101,48 +101,52 @@ var (
 
 // setup and checking for arguments
 func main() {
-	fmt.Println(start)
-	args := os.Args
-	args[0] = "Hash-Cracker"
+	if mode == "hash" {
+		fmt.Println(start)
+		args := os.Args
+		args[0] = "Hash-Cracker"
+		flags[4] = "1"
+		flags[5] = "50"
 
-	// check for command line arguments
-	for index, element := range args {
-		switch element {
-		case "-h":
-			fmt.Println(help)
-			os.Exit(0)
-		case "-t":
-			type_ = args[index+1]
-		case "-p":
-			hashed = args[index+1]
-		case "-w":
-			path = args[index+1]
-			isWordlist = true
-		case "-l":
-			flags[0] = args[index]
-		case "-L":
-			flags[1] = args[index]
-		case "-n":
-			flags[2] = args[index]
-		case "-s":
-			flags[3] = args[index]
-		case "-m":
-			flags[4] = args[index+1]
-		case "-M":
-			flags[5] = args[index+1]
+		// check for command line arguments
+		for index, element := range args {
+			switch element {
+			case "-h":
+				fmt.Println(help)
+				os.Exit(0)
+			case "-t":
+				type_ = args[index+1]
+			case "-p":
+				hashed = args[index+1]
+			case "-w":
+				path = args[index+1]
+				isWordlist = true
+			case "-l":
+				flags[0] = args[index]
+			case "-L":
+				flags[1] = args[index]
+			case "-n":
+				flags[2] = args[index]
+			case "-s":
+				flags[3] = args[index]
+			case "-m":
+				flags[4] = args[index+1]
+			case "-M":
+				flags[5] = args[index+1]
+			}
 		}
-	}
 
-	//start wordlist mode when -w is given
-	if isWordlist {
-		wordlist(hashed, type_, path)
-		os.Exit(0)
-	} else if len(args) > 1 {
-		fmt.Println(len(args), args)
-		fmt.Println(brute_force(flags, hashed))
-	} else {
-		fmt.Println("Enter -h for help\n ")
-		os.Exit(0)
+		//start wordlist mode when -w is given
+		if isWordlist {
+			wordlist(hashed, type_, path)
+			os.Exit(0)
+		} else if len(args) > 1 {
+			fmt.Println(len(args), args)
+			fmt.Println(brute_force(flags, hashed))
+		} else {
+			fmt.Println("Enter -h for help\n ")
+			os.Exit(0)
+		}
 	}
 }
 
