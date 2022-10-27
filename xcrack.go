@@ -22,7 +22,7 @@ var (
 	l_letters = [26]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
 	u_letters = [26]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
 	numbers   = [10]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
-	special   = [39]string{"^", "´", "+", "#", "-", "+", ".", "\"", "<", "°", "!", "§", "$", "%", "&", "/", "(", ")", "=", "?", "`", "*", "'", "_", ":", ";", "′", "{", "[", "]", "}", "\\", "¸", "~", "’", "–", "·"}
+	special   = [39]string{" ", "^", "´", "+", "#", "-", "+", ".", "\"", "<", "°", "!", "§", "$", "%", "&", "/", "(", ")", "=", "?", "`", "*", "'", "_", ":", ";", "′", "{", "[", "]", "}", "\\", "¸", "~", "’", "–", "·"}
 	chars     [101]string
 	length    int
 
@@ -126,7 +126,7 @@ func main() {
 	if islist {
 		wordlist(hashed, type_, path)
 		os.Exit(0)
-	} else if len(args) > 2 {
+	} else if len(args) > 1 {
 		fmt.Println(len(args), args)
 		fmt.Println(brute_force(included, hashed))
 	} else {
@@ -185,7 +185,7 @@ func brute(chars [101]string, hashed string, length int, jobs <-chan int, result
 
 	fmt.Println("Starting brute force mode")
 	for currentLength := range jobs {
-		fmt.Printf("Starting with length: %v,\n %v\n", currentLength, currentLength*length)
+		fmt.Printf("Starting with length: %v\n", currentLength)
 
 	}
 
