@@ -144,7 +144,7 @@ func main() {
 			wordlist(hashed, type_, path)
 			os.Exit(0)
 		} else if len(args) > 1 {
-			fmt.Println(brute_force(flags, hashed, type_))
+			brute_force(flags, hashed, type_)
 		} else {
 			fmt.Println("Enter -h for help\n ")
 			os.Exit(0)
@@ -177,7 +177,8 @@ func wordlist(password string, type_ string, path string) {
 }
 
 // setting up brute force mode
-func brute_force(args [6]string, password string, type_ string) string {
+func brute_force(args [6]string, password string, type_ string) {
+	fmt.Println("Starting brute force mode")
 	min, err := strconv.Atoi(args[4])
 	max, err2 := strconv.Atoi(args[5])
 
@@ -221,14 +222,13 @@ func brute_force(args [6]string, password string, type_ string) string {
 
 	for i := 0; i < max-min+1; i++ {
 		go brute(chars, password, jobs, result)
-		fmt.Println("New goroutine")
 	}
 
 	for i := min; i <= max; i++ {
 		jobs <- i
 	}
 
-	close(jobs)
+	//close(jobs)
 
 	var res string
 	for i := range result {
@@ -236,8 +236,8 @@ func brute_force(args [6]string, password string, type_ string) string {
 			res = i
 		}
 	}
+	fmt.Println(res)
 
-	return res
 }
 
 // Brute forcer
@@ -248,10 +248,7 @@ func brute(chars []string, hashed string, jobs <-chan int, result chan<- string)
 	//jobs = jobs for lengths for multiple gorutines
 	//result = channel to send password if found
 
-	fmt.Println("Starting brute force mode")
-
 	for currentLength := range jobs {
-		fmt.Printf("Starting with length: %v\n", currentLength)
 		counter := make([]int, currentLength)
 		password := make([]string, currentLength)
 		counter[0] = -1
@@ -281,14 +278,13 @@ func brute(chars []string, hashed string, jobs <-chan int, result chan<- string)
 			}
 			pw := strings.Join(password[:], "")
 			pwh := hash(pw, type_)
-			fmt.Println(pw, pwh)
+			//fmt.Println(pw, pwh)
 			if pwh == hashed {
-				result <- pw
-				return
+				fmt.Println(pw)
+				os.Exit(0)
 			}
 
 		}
-		return
 
 	}
 
