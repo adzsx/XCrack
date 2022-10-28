@@ -215,38 +215,32 @@ func brute_force(args [6]string, password string, type_ string) {
 	//password: hashed password
 	//type_: type of hash
 	//jobs: length to generate password
-	//result: channel to send password
 
 	jobs := make(chan int, max-min)
-	result := make(chan string, 1)
+	result := make(chan string, 100)
 
 	for i := 0; i < max-min+1; i++ {
-		go brute(chars, password, jobs, result)
+		go brute(chars, password, jobs)
 	}
 
 	for i := min; i <= max; i++ {
 		jobs <- i
 	}
 
-	//close(jobs)
+	close(jobs)
 
-	var res string
 	for i := range result {
-		if i != "" {
-			res = i
-		}
+		fmt.Println(i)
 	}
-	fmt.Println(res)
 
 }
 
 // Brute forcer
-func brute(chars []string, hashed string, jobs <-chan int, result chan<- string) {
+func brute(chars []string, hashed string, jobs <-chan int) {
 	//chars = characters for password
 	//hashed = hashed password to crack
 	//length = length of characters in chars
 	//jobs = jobs for lengths for multiple gorutines
-	//result = channel to send password if found
 
 	for currentLength := range jobs {
 		counter := make([]int, currentLength)
@@ -278,9 +272,9 @@ func brute(chars []string, hashed string, jobs <-chan int, result chan<- string)
 			}
 			pw := strings.Join(password[:], "")
 			pwh := hash(pw, type_)
-			//fmt.Println(pw, pwh)
+			fmt.Println(pw, pwh)
 			if pwh == hashed {
-				fmt.Println(pw)
+				fmt.Printf("Password: %v\n", pw)
 				os.Exit(0)
 			}
 
