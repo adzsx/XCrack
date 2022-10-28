@@ -120,6 +120,7 @@ func main() {
 				type_ = args[index+1]
 			case "-p":
 				hashed = args[index+1]
+
 			case "-w":
 				path = args[index+1]
 				isWordlist = true
@@ -279,15 +280,17 @@ func brute(chars []string, hashed string, jobs <-chan int, result chan<- string)
 				password[index] = chars[value]
 			}
 			pw := strings.Join(password[:], "")
-			pwh := hash(pw, "md5")
+			pwh := hash(pw, type_)
+			fmt.Println(pw, pwh)
 			if pwh == hashed {
 				result <- pw
+				return
 			}
 
 		}
+		return
 
 	}
-	result <- ""
 
 }
 
