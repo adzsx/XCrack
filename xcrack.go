@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -258,6 +259,8 @@ func brute(chars []string, hashed string, jobs <-chan int, result chan<- string)
 			for index, value := range counter {
 				password[index] = chars[value]
 			}
+			pw := strings.Join(password[:], "")
+			fmt.Println(pw)
 
 		}
 
