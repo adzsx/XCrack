@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"os"
+	"strconv"
 )
 
 var (
@@ -93,7 +94,7 @@ Wordlist generation mode:
 	l_letters = [26]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
 	u_letters = [26]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
 	numbers   = [10]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
-	special   = [39]string{" ", "^", "´", "+", "#", "-", "+", ".", "\"", "<", "°", "!", "§", "$", "%", "&", "/", "(", ")", "=", "?", "`", "*", "'", "_", ":", ";", "′", "{", "[", "]", "}", "\\", "¸", "~", "’", "–", "·"}
+	special   = [39]string{" ", "^", "´", "+", "#", "-", "+", ".", "\"", "<", "°", "!", "§", "$", "%", "&", "/", "(", ")", "=", "?", "`", "*", "'", "_", ":", ";", "′", "{", "[", "]", "}", "\\", ".", "~", "’", "–", "·"}
 
 	//Characters defined by flags
 	chars []string
@@ -141,7 +142,6 @@ func main() {
 			wordlist(hashed, type_, path)
 			os.Exit(0)
 		} else if len(args) > 1 {
-			fmt.Println(len(args), args)
 			fmt.Println(brute_force(flags, hashed))
 		} else {
 			fmt.Println("Enter -h for help\n ")
@@ -174,8 +174,14 @@ func wordlist(password string, type_ string, path string) {
 	file.Close()
 }
 
-// setting up wordlist mode
+// setting up brute force mode
 func brute_force(args [6]string, password string) string {
+	min, err := strconv.Atoi(args[4])
+	max, err2 := strconv.Atoi(args[5])
+
+	check(err)
+	check(err2)
+
 	if contains(args, "-n") {
 		for _, v := range numbers {
 			chars = append(chars, v)
@@ -196,15 +202,20 @@ func brute_force(args [6]string, password string) string {
 			chars = append(chars, v)
 		}
 	}
-	jobs := make(chan int, 50)
+
+	jobs := make(chan int, max-min)
 	result := make(chan string, 1)
 
-	go brute(chars, password, jobs, result)
-	go brute(chars, password, jobs, result)
-	go brute(chars, password, jobs, result)
-	go brute(chars, password, jobs, result)
+	if max-min == 0 {
+		go brute(chars, password, jobs, result)
+	}
 
-	for i := 1; i <= 50; i++ {
+	for i := 0; i < max-min; i++ {
+		go brute(chars, password, jobs, result)
+		fmt.Println("New goroutine")
+	}
+
+	for i := min; i <= max; i++ {
 		jobs <- i
 	}
 	close(jobs)
@@ -212,6 +223,7 @@ func brute_force(args [6]string, password string) string {
 	return <-result
 }
 
+// Brute forcer
 func brute(chars []string, hashed string, jobs <-chan int, result chan<- string) {
 	//chars = characters for password
 	//hashed = hashed password to crack
@@ -220,12 +232,37 @@ func brute(chars []string, hashed string, jobs <-chan int, result chan<- string)
 	//result = channel to send password if found
 
 	fmt.Println("Starting brute force mode")
-	counter := make([]int, len(chars))
-	counter[0] = -1
 	for currentLength := range jobs {
-		fmt.Printf("Starting with length: %v\n%v\n", currentLength, chars)
+		fmt.Printf("Starting with length: %v\n", currentLength)
+		counter := make([]int, currentLength)
+		counter[0] = -1
+		total := len(counter) * (len(chars) - 1)
+		for sum(counter) < total {
+
+			counter[0] += 1
+
+			for index, value := range counter {
+
+				if value > len(chars)-1 {
+					counter[index] = 0
+
+					if len(counter) > index+1 {
+
+						counter[index+1] += 1
+						continue
+
+					} else {
+						break
+					}
+				}
+			}
+
+			fmt.Println(counter)
+
+		}
 
 	}
+	fmt.Println("Done")
 
 	result <- hashed
 }
@@ -253,9 +290,16 @@ func contains(s [6]string, element string) bool {
 	return false
 }
 
-// error checker
 func check(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func sum(arr []int) int {
+	total := 0
+	for _, v := range arr {
+		total += v
+	}
+	return total
 }
