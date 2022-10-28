@@ -206,11 +206,7 @@ func brute_force(args [6]string, password string) string {
 	jobs := make(chan int, max-min)
 	result := make(chan string, 1)
 
-	if max-min == 0 {
-		go brute(chars, password, jobs, result)
-	}
-
-	for i := 0; i < max-min; i++ {
+	for i := 0; i < max-min+1; i++ {
 		go brute(chars, password, jobs, result)
 		fmt.Println("New goroutine")
 	}
@@ -232,9 +228,11 @@ func brute(chars []string, hashed string, jobs <-chan int, result chan<- string)
 	//result = channel to send password if found
 
 	fmt.Println("Starting brute force mode")
+
 	for currentLength := range jobs {
 		fmt.Printf("Starting with length: %v\n", currentLength)
 		counter := make([]int, currentLength)
+		password := make([]string, currentLength)
 		counter[0] = -1
 		total := len(counter) * (len(chars) - 1)
 		for sum(counter) < total {
@@ -257,14 +255,15 @@ func brute(chars []string, hashed string, jobs <-chan int, result chan<- string)
 				}
 			}
 
-			fmt.Println(counter)
+			for index, value := range counter {
+				password[index] = chars[value]
+			}
 
 		}
 
 	}
 	fmt.Println("Done")
 
-	result <- hashed
 }
 
 // hashing function
