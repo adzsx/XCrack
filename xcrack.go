@@ -143,7 +143,7 @@ func main() {
 			wordlist(hashed, type_, path)
 			os.Exit(0)
 		} else if len(args) > 1 {
-			fmt.Println(brute_force(flags, hashed))
+			fmt.Println(brute_force(flags, hashed, type_))
 		} else {
 			fmt.Println("Enter -h for help\n ")
 			os.Exit(0)
@@ -165,7 +165,7 @@ func wordlist(password string, type_ string, path string) {
 
 		for fileScanner.Scan() {
 			data := fileScanner.Text()
-			if hash(type_, data) == password {
+			if hash(data, type_) == password {
 				fmt.Printf("Password: %v \n", data)
 				os.Exit(0)
 			}
@@ -176,7 +176,7 @@ func wordlist(password string, type_ string, path string) {
 }
 
 // setting up brute force mode
-func brute_force(args [6]string, password string) string {
+func brute_force(args [6]string, password string, type_ string) string {
 	min, err := strconv.Atoi(args[4])
 	max, err2 := strconv.Atoi(args[5])
 
@@ -204,6 +204,17 @@ func brute_force(args [6]string, password string) string {
 		}
 	}
 
+	if min > max {
+		fmt.Println("min length cant be longer than max length!")
+		os.Exit(1)
+	}
+
+	//chars: all chars used in password
+	//password: hashed password
+	//type_: type of hash
+	//jobs: length to generate password
+	//result: channel to send password
+
 	jobs := make(chan int, max-min)
 	result := make(chan string, 1)
 
@@ -215,9 +226,17 @@ func brute_force(args [6]string, password string) string {
 	for i := min; i <= max; i++ {
 		jobs <- i
 	}
+
 	close(jobs)
 
-	return <-result
+	var res string
+	for i := range result {
+		if i != "" {
+			res = i
+		}
+	}
+
+	return res
 }
 
 // Brute forcer
@@ -260,18 +279,21 @@ func brute(chars []string, hashed string, jobs <-chan int, result chan<- string)
 				password[index] = chars[value]
 			}
 			pw := strings.Join(password[:], "")
-			fmt.Println(pw)
+			pwh := hash(pw, "md5")
+			if pwh == hashed {
+				result <- pw
+			}
 
 		}
 
 	}
-	fmt.Println("Done")
+	result <- ""
 
 }
 
 // hashing function
-func hash(form string, text string) string {
-	switch form {
+func hash(text string, type_ string) string {
+	switch type_ {
 	case "md5":
 		hash := md5.Sum([]byte(text))
 		return hex.EncodeToString(hash[:])
