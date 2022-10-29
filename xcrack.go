@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var (
@@ -20,7 +21,7 @@ a tool for common password attacks
 Modes:
 -------------------------------------------------------------------------------------
 
-hash:			Cracks a given hash with a wordlist or brute force attack (default)
+hash:			Cracks a given hash with a wordlist or brute force attack
 gen:			Generated a wordlist based on your preferences
 login:			Cracks a login on a website
 
@@ -53,7 +54,7 @@ Hash mode:
 
 Wordlist generation mode:
 	Presets:
-		-f PATH:		Stores wordlist in PATH, cwd is the default
+		-f PATH:		Stores wordlist in PATH
 
 	Character preferences:
 		-n: 			numbers
@@ -75,9 +76,6 @@ Wordlist generation mode:
 
 ############################################
 `
-
-	//mode (help message)
-	mode string = "hash"
 
 	//storing for flags in declaration of app (eg. -l -s, -m x -M y)
 	//password
@@ -101,12 +99,14 @@ Wordlist generation mode:
 	chars []string
 )
 
+var now = time.Now()
+
 // setup and checking for arguments
 func main() {
-	if mode == "hash" {
+	args := os.Args
+	args[0] = "Hash-Cracker"
+	if args[1] == "hash" {
 		fmt.Println(start)
-		args := os.Args
-		args[0] = "Hash-Cracker"
 		flags[4] = "1"
 		flags[5] = "50"
 
@@ -114,7 +114,8 @@ func main() {
 		for index, element := range args {
 			switch element {
 			case "-h":
-				fmt.Println(help)
+				fmt.Printf("%v\n", help)
+				fmt.Printf("\n[%v]\n", time.Since(now))
 				os.Exit(0)
 			case "-t":
 				type_ = args[index+1]
@@ -140,28 +141,38 @@ func main() {
 		}
 
 		//Display error message when hashed or type_ if not given
+		if len(args) < 3 {
+			fmt.Printf("Enter -h for help\n")
+			os.Exit(0)
+		}
 		if hashed == "" && type_ == "" {
 			fmt.Printf("You need to specity the hashed password and the type of the hash\n")
-			os.Exit(1)
+			os.Exit(0)
 		} else if hashed == "" {
 			fmt.Printf("You need to specify the hashed password\n")
-			os.Exit(1)
+			os.Exit(0)
 		} else if type_ == "" {
 			fmt.Printf("You need to specify the type of the hash\n")
-			os.Exit(1)
+			os.Exit(0)
 		}
 
 		//start wordlist mode when -w is given
 		if isWordlist {
 			wordlist(hashed, type_, path)
+			fmt.Printf("\n[%v]\n", time.Since(now))
 			os.Exit(0)
-		} else if len(args) > 1 {
+		} else if len(args) > 6 {
 			brute_force(flags, hashed, type_)
 		} else {
 			fmt.Println("Enter -h for help\n ")
+			fmt.Printf("\n[%v]\n", time.Since(now))
 			os.Exit(0)
 		}
 	}
+	if args[1] == "gen" {
+		fmt.Println("Work in progress!\n ")
+	}
+	fmt.Println("Enter -h for help")
 }
 
 // starting wordlist mode
@@ -170,6 +181,7 @@ func wordlist(password string, type_ string, path string) {
 	file, err := os.Open(path)
 	if err != nil {
 		fmt.Printf("Path \"%v\" found. Plase enter a valid path!\n", path)
+		fmt.Printf("\n[%v]\n", time.Since(now))
 		os.Exit(1)
 	} else {
 		fileScanner := bufio.NewScanner(file)
@@ -180,6 +192,7 @@ func wordlist(password string, type_ string, path string) {
 			data := fileScanner.Text()
 			if hash(data, type_) == password {
 				fmt.Printf("Password: %v \n", data)
+				fmt.Printf("\n[%v]\n", time.Since(now))
 				os.Exit(0)
 			}
 		}
@@ -229,10 +242,10 @@ func brute_force(args [6]string, password string, type_ string) {
 	//jobs: length to generate password
 
 	jobs := make(chan int, max-min)
-	result := make(chan string, 100)
+	result := make(chan bool)
 
 	for i := 0; i < max-min+1; i++ {
-		go brute(chars, password, jobs)
+		go brute(chars, password, jobs, result)
 	}
 
 	for i := min; i <= max; i++ {
@@ -241,20 +254,33 @@ func brute_force(args [6]string, password string, type_ string) {
 
 	close(jobs)
 
+	var failures []bool
 	for i := range result {
-		fmt.Println(i)
+		if !i {
+			failures = append(failures, i)
+			if len(failures) >= max-min {
+				fmt.Println("Password not found")
+				fmt.Printf("\n[%v]\n", time.Since(now))
+				os.Exit(0)
+			}
+		}
 	}
 
 }
 
 // Brute forcer
-func brute(chars []string, hashed string, jobs <-chan int) {
+func brute(chars []string, hashed string, jobs <-chan int, result chan<- bool) {
 	//chars = characters for password
 	//hashed = hashed password to crack
 	//length = length of characters in chars
 	//jobs = jobs for lengths for multiple gorutines
 
 	for currentLength := range jobs {
+		// if len(jobs) == 0 {
+		// 	fmt.Println("Password not found! Password probably longer than specified length")
+		// 	fmt.Printf("\n[%v]\n", time.Since(now))
+		// 	os.Exit(1)
+		// }
 		counter := make([]int, currentLength)
 		password := make([]string, currentLength)
 		counter[0] = -1
@@ -286,6 +312,63 @@ func brute(chars []string, hashed string, jobs <-chan int) {
 			pwh := hash(pw, type_)
 			if pwh == hashed {
 				fmt.Printf("Password: %v\n", pw)
+				fmt.Printf("\n[%v]\n", time.Since(now))
+				os.Exit(0)
+			}
+
+		}
+
+	}
+	result <- false
+
+}
+
+// Wordlist generation mode
+func gen(chars []string, hashed string, jobs <-chan int) {
+	//chars = characters for password
+	//hashed = hashed password to crack
+	//length = length of characters in chars
+	//jobs = jobs for lengths for multiple gorutines
+
+	for currentLength := range jobs {
+		// if len(jobs) == 0 {
+		// 	fmt.Println("Password not found! Password probably longer than specified length")
+		// 	fmt.Printf("\n[%v]\n", time.Since(now))
+		// 	os.Exit(1)
+		// }
+		fmt.Println(len(jobs))
+		counter := make([]int, currentLength)
+		password := make([]string, currentLength)
+		counter[0] = -1
+		total := len(counter) * (len(chars) - 1)
+		for sum(counter) < total {
+
+			counter[0] += 1
+
+			for index, value := range counter {
+
+				if value > len(chars)-1 {
+					counter[index] = 0
+
+					if len(counter) > index+1 {
+
+						counter[index+1] += 1
+						continue
+
+					} else {
+						break
+					}
+				}
+			}
+
+			for index, value := range counter {
+				password[index] = chars[value]
+			}
+			pw := strings.Join(password[:], "")
+			pwh := hash(pw, type_)
+			if pwh == hashed {
+				fmt.Printf("Password: %v\n", pw)
+				fmt.Printf("\n[%v]\n", time.Since(now))
 				os.Exit(0)
 			}
 
