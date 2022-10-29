@@ -256,13 +256,11 @@ func brute_force(args [6]string, password string, type_ string) {
 
 	var failures []bool
 	for i := range result {
-		if !i {
-			failures = append(failures, i)
-			if len(failures) >= max-min {
-				fmt.Println("Password not found")
-				fmt.Printf("\n[%v]\n", time.Since(now))
-				os.Exit(0)
-			}
+		failures = append(failures, i)
+		if len(failures) >= max-min {
+			fmt.Println("Password not found")
+			fmt.Printf("\n[%v]\n", time.Since(now))
+			os.Exit(0)
 		}
 	}
 
