@@ -139,6 +139,18 @@ func main() {
 			}
 		}
 
+		//Display error message when hashed or type_ if not given
+		if hashed == "" && type_ == "" {
+			fmt.Printf("You need to specity the hashed password and the type of the hash\n")
+			os.Exit(1)
+		} else if hashed == "" {
+			fmt.Printf("You need to specify the hashed password\n")
+			os.Exit(1)
+		} else if type_ == "" {
+			fmt.Printf("You need to specify the type of the hash\n")
+			os.Exit(1)
+		}
+
 		//start wordlist mode when -w is given
 		if isWordlist {
 			wordlist(hashed, type_, path)
@@ -272,7 +284,6 @@ func brute(chars []string, hashed string, jobs <-chan int) {
 			}
 			pw := strings.Join(password[:], "")
 			pwh := hash(pw, type_)
-			fmt.Println(pw, pwh)
 			if pwh == hashed {
 				fmt.Printf("Password: %v\n", pw)
 				os.Exit(0)
@@ -297,7 +308,7 @@ func hash(text string, type_ string) string {
 	return ""
 }
 
-// in list checker
+// in array checker
 func contains(s [6]string, element string) bool {
 	for _, v := range s {
 		if element == v {
