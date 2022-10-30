@@ -6,6 +6,7 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
+	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -168,7 +169,22 @@ func main() {
 			os.Exit(0)
 		}
 	case "gen":
-		fmt.Println("Work in progress!")
+		for index, element := range args {
+			switch element {
+			case "-l":
+				flags[0] = args[index]
+			case "-L":
+				flags[1] = args[index]
+			case "-n":
+				flags[2] = args[index]
+			case "-s":
+				flags[3] = args[index]
+			case "-m":
+				flags[4] = args[index+1]
+			case "-M":
+				flags[5] = args[index+1]
+			}
+		}
 		os.Exit(0)
 	case "-h":
 		fmt.Println(help)
@@ -323,12 +339,34 @@ func brute(chars []string, hashed string, jobs <-chan int, result chan<- bool) {
 
 }
 
+func wgenSetup(args [6]string, path string) {
+	min, err := strconv.Atoi(args[4])
+	max, err2 := strconv.Atoi(args[5])
+
+	check(err)
+	check(err2)
+
+	jobs := make(chan int, max-min)
+
+	for i := 0; i < max-min+1; i++ {
+		go gen(chars, jobs, path)
+	}
+
+	for i := min; i < max; i++ {
+		jobs <- i
+	}
+
+	close(jobs)
+}
+
 // Wordlist generation mode
-func gen(chars []string, hashed string, jobs <-chan int) {
+func gen(chars []string, jobs <-chan int, path string) {
 	//chars = characters for password
 	//hashed = hashed password to crack
 	//length = length of characters in chars
 	//jobs = jobs for lengths for multiple gorutines
+
+	file, _ := os.Create(path)
 
 	for currentLength := range jobs {
 		// if len(jobs) == 0 {
@@ -365,13 +403,7 @@ func gen(chars []string, hashed string, jobs <-chan int) {
 				password[index] = chars[value]
 			}
 			pw := strings.Join(password[:], "")
-			pwh := hash(pw, type_)
-			if pwh == hashed {
-				fmt.Printf("Password: %v\n", pw)
-				fmt.Printf("\n[%v]\n", time.Since(now))
-				os.Exit(0)
-			}
-
+			io.WriteString(file, pw)
 		}
 
 	}
