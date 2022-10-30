@@ -23,7 +23,6 @@ Modes:
 
 hash:			Cracks a given hash with a wordlist or brute force attack
 gen:			Generated a wordlist based on your preferences
-login:			Cracks a login on a website
 
 (mode has to be the first argument)
 
@@ -33,7 +32,7 @@ login:			Cracks a login on a website
 Hash mode:
 	Presets:
 		-p HASH:		(required) Sets the HASH
-		-t HASH-TYPE:	(required) specify the HASH-TYPE: (md5, sha1)
+		-t HASH-TYPE:		(required) specify the HASH-TYPE: (md5, sha1)
 
 	Character preferences:
 		-n: 			numbers
@@ -54,7 +53,9 @@ Hash mode:
 
 Wordlist generation mode:
 	Presets:
-		-f PATH:		Stores wordlist in PATH
+		-f PATH:		(required) Stores wordlist in PATH
+					If file already exists, password will be appended
+					duplicates will not be removed
 
 	Character preferences:
 		-n: 			numbers
@@ -104,8 +105,10 @@ var now = time.Now()
 // setup and checking for arguments
 func main() {
 	args := os.Args
+	args = append(args, "")
 	args[0] = "Hash-Cracker"
-	if args[1] == "hash" {
+	switch args[1] {
+	case "hash":
 		fmt.Println(start)
 		flags[4] = "1"
 		flags[5] = "50"
@@ -113,10 +116,6 @@ func main() {
 		// check for command line arguments
 		for index, element := range args {
 			switch element {
-			case "-h":
-				fmt.Printf("%v\n", help)
-				fmt.Printf("\n[%v]\n", time.Since(now))
-				os.Exit(0)
 			case "-t":
 				type_ = args[index+1]
 			case "-p":
@@ -141,7 +140,7 @@ func main() {
 		}
 
 		//Display error message when hashed or type_ if not given
-		if len(args) < 3 {
+		if len(args) < 4 {
 			fmt.Printf("Enter -h for help\n")
 			os.Exit(0)
 		}
@@ -164,13 +163,16 @@ func main() {
 		} else if len(args) > 6 {
 			brute_force(flags, hashed, type_)
 		} else {
-			fmt.Println("Enter -h for help\n ")
+			fmt.Println("Enter -h for help")
 			fmt.Printf("\n[%v]\n", time.Since(now))
 			os.Exit(0)
 		}
-	}
-	if args[1] == "gen" {
-		fmt.Println("Work in progress!\n ")
+	case "gen":
+		fmt.Println("Work in progress!")
+		os.Exit(0)
+	case "-h":
+		fmt.Println(help)
+		os.Exit(0)
 	}
 	fmt.Println("Enter -h for help")
 }
