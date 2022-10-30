@@ -183,8 +183,11 @@ func main() {
 				flags[4] = args[index+1]
 			case "-M":
 				flags[5] = args[index+1]
+			case "-p":
+				path = args[index+1]
 			}
 		}
+		wgenSetup(flags, path)
 		os.Exit(0)
 	case "-h":
 		fmt.Println(help)
@@ -340,6 +343,8 @@ func brute(chars []string, hashed string, jobs <-chan int, result chan<- bool) {
 }
 
 func wgenSetup(args [6]string, path string) {
+	file, _ := os.Create(path)
+
 	min, err := strconv.Atoi(args[4])
 	max, err2 := strconv.Atoi(args[5])
 
@@ -349,7 +354,7 @@ func wgenSetup(args [6]string, path string) {
 	jobs := make(chan int, max-min)
 
 	for i := 0; i < max-min+1; i++ {
-		go gen(chars, jobs, path)
+		go gen(chars, jobs, file)
 	}
 
 	for i := min; i < max; i++ {
@@ -360,13 +365,11 @@ func wgenSetup(args [6]string, path string) {
 }
 
 // Wordlist generation mode
-func gen(chars []string, jobs <-chan int, path string) {
+func gen(chars []string, jobs <-chan int, file *os.File) {
 	//chars = characters for password
 	//hashed = hashed password to crack
 	//length = length of characters in chars
 	//jobs = jobs for lengths for multiple gorutines
-
-	file, _ := os.Create(path)
 
 	for currentLength := range jobs {
 		// if len(jobs) == 0 {
@@ -374,7 +377,7 @@ func gen(chars []string, jobs <-chan int, path string) {
 		// 	fmt.Printf("\n[%v]\n", time.Since(now))
 		// 	os.Exit(1)
 		// }
-		fmt.Println(len(jobs))
+		fmt.Println(currentLength)
 		counter := make([]int, currentLength)
 		password := make([]string, currentLength)
 		counter[0] = -1
