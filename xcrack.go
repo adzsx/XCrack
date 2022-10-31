@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -105,6 +106,7 @@ var now = time.Now()
 
 // setup and checking for arguments
 func main() {
+	fmt.Println(start)
 	args := os.Args
 	args = append(args, "")
 	args[0] = "Hash-Cracker"
@@ -112,7 +114,6 @@ func main() {
 	flags[5] = "50"
 	switch args[1] {
 	case "hash":
-		fmt.Println(start)
 
 		// check for command line arguments
 		for index, element := range args {
@@ -160,13 +161,10 @@ func main() {
 		if isWordlist {
 			wordlist(hashed, type_, path)
 			fmt.Printf("\n[%v]\n", time.Since(now))
-			os.Exit(0)
 		} else if len(args) > 6 {
 			brute_force(flags, hashed, type_)
 		} else {
 			fmt.Println("Enter -h for help")
-			fmt.Printf("\n[%v]\n", time.Since(now))
-			os.Exit(0)
 		}
 	case "gen":
 		for index, element := range args {
@@ -187,13 +185,14 @@ func main() {
 				path = args[index+1]
 			}
 		}
-		wgenSetup(flags, path)
-		os.Exit(0)
+		if path == "" {
+			fmt.Println("You need to enter a path")
+		} else {
+			wgenSetup(flags, path)
+		}
 	case "-h":
 		fmt.Println(help)
-		os.Exit(0)
 	}
-	fmt.Println("Enter -h for help")
 }
 
 // starting wordlist mode
@@ -343,13 +342,18 @@ func brute(chars []string, hashed string, jobs <-chan int, result chan<- bool) {
 }
 
 func wgenSetup(args [6]string, path string) {
+	fmt.Println("Starting wordlist generation mode.")
+
+	//some variables for generating the wordlist
 	file, _ := os.Create(path)
 	min, err := strconv.Atoi(args[4])
 	max, err2 := strconv.Atoi(args[5])
 
+	//check errors in string conversion
 	check(err)
 	check(err2)
 
+	//Create list with characters included in the password
 	if contains(args, "-n") {
 		for _, v := range numbers {
 			chars = append(chars, v)
@@ -371,23 +375,34 @@ func wgenSetup(args [6]string, path string) {
 		}
 	}
 
-	fmt.Println(chars)
+	//fmt.Println(chars)
 
+	//length of passwords to be generated
 	jobs := make(chan int, max-min)
+	response := make(chan bool, max-min)
 
 	for i := 0; i < max-min+1; i++ {
-		go gen(chars, jobs, file)
+		go gen(chars, jobs, response, file)
 	}
 
-	for i := min; i < max; i++ {
+	for i := min; i <= max; i++ {
 		jobs <- i
 	}
 
 	close(jobs)
+
+	counter := 0
+
+	for range response {
+		counter++
+	}
+	if counter == max-min {
+		fmt.Println("Done")
+	}
 }
 
 // Wordlist generation mode
-func gen(chars []string, jobs <-chan int, file *os.File) {
+func gen(chars []string, jobs <-chan int, response chan<- bool, file *os.File) {
 	//chars = characters for password
 	//hashed = hashed password to crack
 	//length = length of characters in chars
@@ -423,11 +438,13 @@ func gen(chars []string, jobs <-chan int, file *os.File) {
 				password[index] = chars[value]
 			}
 			pw := strings.Join(password[:], "")
-			fmt.Println(pw)
+			io.WriteString(file, pw+"\n")
+			response <- true
 
 		}
 
 	}
+	response <- false
 
 }
 
