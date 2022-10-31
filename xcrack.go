@@ -274,10 +274,10 @@ func brute_force(args [6]string, password string, type_ string) {
 
 	close(jobs)
 
-	var failures []bool
+	var finished []bool
 	for i := range result {
-		failures = append(failures, i)
-		if len(failures) >= max-min {
+		finished = append(finished, i)
+		if len(finished) >= max-min {
 			fmt.Println("Password not found")
 			fmt.Printf("\n[%v]\n", time.Since(now))
 			os.Exit(0)
@@ -391,13 +391,14 @@ func wgenSetup(args [6]string, path string) {
 
 	close(jobs)
 
-	counter := 0
-
-	for range response {
-		counter++
-	}
-	if counter == max-min {
-		fmt.Println("Done")
+	var finished []bool
+	for i := range response {
+		finished = append(finished, i)
+		if len(finished) >= max-min {
+			fmt.Println("Done")
+			fmt.Printf("\n[%v]\n", time.Since(now))
+			os.Exit(0)
+		}
 	}
 }
 
@@ -409,7 +410,6 @@ func gen(chars []string, jobs <-chan int, response chan<- bool, file *os.File) {
 	//jobs = jobs for lengths for multiple gorutines
 
 	for currentLength := range jobs {
-		fmt.Println(currentLength)
 		counter := make([]int, currentLength)
 		password := make([]string, currentLength)
 		counter[0] = -1
@@ -439,12 +439,10 @@ func gen(chars []string, jobs <-chan int, response chan<- bool, file *os.File) {
 			}
 			pw := strings.Join(password[:], "")
 			io.WriteString(file, pw+"\n")
-			response <- true
-
 		}
 
 	}
-	response <- false
+	response <- true
 
 }
 
