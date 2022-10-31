@@ -186,7 +186,6 @@ func main() {
 			case "-p":
 				path = args[index+1]
 			}
-			wgenSetup(flags, path)
 		}
 		wgenSetup(flags, path)
 		os.Exit(0)
@@ -344,13 +343,35 @@ func brute(chars []string, hashed string, jobs <-chan int, result chan<- bool) {
 }
 
 func wgenSetup(args [6]string, path string) {
-	//fmt.Println("Here")
 	file, _ := os.Create(path)
 	min, err := strconv.Atoi(args[4])
 	max, err2 := strconv.Atoi(args[5])
 
 	check(err)
 	check(err2)
+
+	if contains(args, "-n") {
+		for _, v := range numbers {
+			chars = append(chars, v)
+		}
+	}
+	if contains(args, "-l") {
+		for _, v := range l_letters {
+			chars = append(chars, v)
+		}
+	}
+	if contains(args, "-L") {
+		for _, v := range u_letters {
+			chars = append(chars, v)
+		}
+	}
+	if contains(args, "-s") {
+		for _, v := range special {
+			chars = append(chars, v)
+		}
+	}
+
+	fmt.Println(chars)
 
 	jobs := make(chan int, max-min)
 
@@ -373,11 +394,7 @@ func gen(chars []string, jobs <-chan int, file *os.File) {
 	//jobs = jobs for lengths for multiple gorutines
 
 	for currentLength := range jobs {
-		// if len(jobs) == 0 {
-		// 	fmt.Println("Password not found! Password probably longer than specified length")
-		// 	fmt.Printf("\n[%v]\n", time.Since(now))
-		// 	os.Exit(1)
-		// }
+		fmt.Println(currentLength)
 		counter := make([]int, currentLength)
 		password := make([]string, currentLength)
 		counter[0] = -1
