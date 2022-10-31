@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"crypto/md5"
 	"crypto/sha1"
-	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -287,7 +286,7 @@ func brute_force(args [6]string, password string, type_ string) {
 }
 
 // Brute forcer
-func brute(chars []string, hashed string, jobs <-chan int, result chan<- bool) {
+func brute(chars []string, hashed string, jobs <-chan int, response chan<- bool) {
 	//chars = characters for password
 	//hashed = hashed password to crack
 	//length = length of characters in chars
@@ -337,7 +336,7 @@ func brute(chars []string, hashed string, jobs <-chan int, result chan<- bool) {
 		}
 
 	}
-	result <- false
+	response <- false
 
 }
 
@@ -456,10 +455,7 @@ func hash(text string, type_ string) string {
 		hash := sha1.Sum([]byte(text))
 		return hex.EncodeToString(hash[:])
 	case "sha256":
-		h := sha256.New()
-		h.Write([]byte(text))
-		bs := h.Sum(nil)
-		return string(bs[:])
+		return "Work in progress"
 	}
 	return ""
 }
