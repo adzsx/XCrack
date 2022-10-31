@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"crypto/md5"
 	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -108,11 +108,11 @@ func main() {
 	args := os.Args
 	args = append(args, "")
 	args[0] = "Hash-Cracker"
+	flags[4] = "1"
+	flags[5] = "50"
 	switch args[1] {
 	case "hash":
 		fmt.Println(start)
-		flags[4] = "1"
-		flags[5] = "50"
 
 		// check for command line arguments
 		for index, element := range args {
@@ -186,6 +186,7 @@ func main() {
 			case "-p":
 				path = args[index+1]
 			}
+			wgenSetup(flags, path)
 		}
 		wgenSetup(flags, path)
 		os.Exit(0)
@@ -343,8 +344,8 @@ func brute(chars []string, hashed string, jobs <-chan int, result chan<- bool) {
 }
 
 func wgenSetup(args [6]string, path string) {
+	//fmt.Println("Here")
 	file, _ := os.Create(path)
-
 	min, err := strconv.Atoi(args[4])
 	max, err2 := strconv.Atoi(args[5])
 
@@ -377,7 +378,6 @@ func gen(chars []string, jobs <-chan int, file *os.File) {
 		// 	fmt.Printf("\n[%v]\n", time.Since(now))
 		// 	os.Exit(1)
 		// }
-		fmt.Println(currentLength)
 		counter := make([]int, currentLength)
 		password := make([]string, currentLength)
 		counter[0] = -1
@@ -406,7 +406,8 @@ func gen(chars []string, jobs <-chan int, file *os.File) {
 				password[index] = chars[value]
 			}
 			pw := strings.Join(password[:], "")
-			io.WriteString(file, pw)
+			fmt.Println(pw)
+
 		}
 
 	}
@@ -422,6 +423,11 @@ func hash(text string, type_ string) string {
 	case "sha1":
 		hash := sha1.Sum([]byte(text))
 		return hex.EncodeToString(hash[:])
+	case "sha256":
+		h := sha256.New()
+		h.Write([]byte(text))
+		bs := h.Sum(nil)
+		return string(bs[:])
 	}
 	return ""
 }
