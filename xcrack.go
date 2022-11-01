@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"crypto/md5"
 	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -17,56 +18,78 @@ var (
 	//some strings to display
 	help string = `
 Xcrack,
-a tool for common password attacks
+a tool for hash attacks and methods
 
 Modes:
 -------------------------------------------------------------------------------------
 
-hash:			Cracks a given hash with a wordlist or brute force attack
-gen:			Generated a wordlist based on your preferences
+hash:   Cracks a given hash with either a wordlist or brute force attack (default)
+list:   Generated a wordlist based on your preferences
+gen:    Generates a hash from a given string
 
-(mode has to be the first argument)
+(mode must be the first argument)
 
 -------------------------------------------------------------------------------------
 
 
-Hash mode:
-	Presets:
-		-p HASH:		(required) Sets the HASH
-		-t HASH-TYPE:		(required) specify the HASH-TYPE: (md5, sha1)
 
-	Character preferences:
-		-n: 			numbers
-		-l: 			lowercase letters
-		-L: 			uppercase letters
-		-s: 			special Characters
+Comming soon:
+-------------------------------------------------------------------------------------
 
-	Length preferences
-		-m LENGTH: 		min LENGTH of password
-		-M LENGTH: 		max LENGTH of password
+zip:	Creates a hash value from a encrypted zip archive
 
-	Wordlist Preferences:
-		-w PATH:		uses a wordlist in PATH instead of character preferences
+-------------------------------------------------------------------------------------
 
 
 
 
 
-Wordlist generation mode:
-	Presets:
-		-f PATH:		(required) Stores wordlist in PATH
-					If file already exists, password will be appended
-					duplicates will not be removed
+hash mode:
+-------------------------------------------------------------------------------------
 
-	Character preferences:
-		-n: 			numbers
-		-l: 			lowercase letters
-		-L: 			uppercase letters
-		-s: 			special Characters
+ -p HASH:  (required) Sets the HASHed password
+ -t TYPE:  specify the hash-TYPE (default: md5)
 
-	Length preferences
-		-m LENGTH: 		min LENGTH of password
-		-M LENGTH: 		max LENGTH of password
+ -n:    numbers
+ -l:    lowercase letters
+ -L:    uppercase letters
+ -s:    special Characters
+ 
+ -m LENGTH:   min LENGTH of password
+ -M LENGTH:   max LENGTH of password
+
+ -w PATH:  uses a wordlist in PATH instead of character preferences
+
+-------------------------------------------------------------------------------------
+
+
+
+
+
+list mode:
+-------------------------------------------------------------------------------------
+
+ -f PATH:  (required) Stores wordlist in PATH
+    If file already exists, password will be appended
+    duplicates will not be removed
+
+ -n:    numbers
+ -l:    lowercase letters
+ -L:    uppercase letters
+ -s:    special Characters
+
+ -m LENGTH:   min LENGTH of password
+ -M LENGTH:   max LENGTH of password
+
+
+
+
+
+gen mode:
+ -t TYPE:   Specifies the type of the hash (default: md5)
+ STRING:    Every other argument will be hashed with the specifies TYPE
+
+-------------------------------------------------------------------------------------
 
 `
 
@@ -83,13 +106,16 @@ Wordlist generation mode:
 	//password
 	hashed string
 
-	//flags
+	//Arguments entered in the command line
 	flags [6]string
 
-	//type of hash
-	type_      string
-	isWordlist bool
-	path       string
+	//some arguments
+	mode       string = "hash"
+	type_      string = "md5"
+	types      []string
+	isWordlist bool   = false
+	path       string = "./wordlist.txt"
+	toHash     []string
 
 	//characters for brute force mode
 	l_letters = [26]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
@@ -107,11 +133,23 @@ var now = time.Now()
 func main() {
 	fmt.Println(start)
 	args := os.Args
-	args = append(args, "")
 	args[0] = "Hash-Cracker"
+	args = append(args, "")
+
+	if args[1] != "hash" && args[1] != "list" && args[1] != "gen" && args[1] != "zip" {
+		mode = "hash"
+	} else if args[1] == "-h" {
+		fmt.Println(help)
+		os.Exit(0)
+	} else {
+		mode = args[1]
+	}
+
+	//specifies the default length
 	flags[4] = "1"
-	flags[5] = "50"
-	switch args[1] {
+	flags[5] = "16"
+
+	switch mode {
 	case "hash":
 
 		// check for command line arguments
@@ -142,17 +180,11 @@ func main() {
 
 		//Display error message when hashed or type_ if not given
 		if len(args) < 4 {
-			fmt.Printf("Enter -h for help\n")
+			fmt.Println("Enter -h for help")
 			os.Exit(0)
 		}
-		if hashed == "" && type_ == "" {
-			fmt.Printf("You need to specity the hashed password and the type of the hash\n")
-			os.Exit(0)
-		} else if hashed == "" {
+		if hashed == "" {
 			fmt.Printf("You need to specify the hashed password\n")
-			os.Exit(0)
-		} else if type_ == "" {
-			fmt.Printf("You need to specify the type of the hash\n")
 			os.Exit(0)
 		}
 
@@ -165,7 +197,8 @@ func main() {
 		} else {
 			fmt.Println("Enter -h for help")
 		}
-	case "gen":
+
+	case "list":
 		for index, element := range args {
 			switch element {
 			case "-l":
@@ -189,14 +222,34 @@ func main() {
 		} else {
 			wgenSetup(flags, path)
 		}
-	case "-h":
-		fmt.Println(help)
+	case "gen":
+
+		for index, element := range args {
+			if element == "-t" {
+				types = append(types, args[index+1])
+			}
+		}
+		for index, element := range args {
+			if index > 1 && element != "-t" && args[index-1] != "-t" {
+				toHash = append(toHash, element)
+			}
+		}
+
+		for _, str := range toHash {
+			for _, type_ := range types {
+				if str != "" {
+					fmt.Printf("\"%v\" (%v):    		%v\n", str, type_, hash(str, type_))
+				}
+			}
+		}
+
+		fmt.Printf("\n[%v]\n", time.Since(now))
 	}
 }
 
 // starting wordlist mode
 func wordlist(password string, type_ string, path string) {
-	fmt.Println("Starting Wordlist mode")
+	fmt.Println("Starting wordlist mode")
 	file, err := os.Open(path)
 	if err != nil {
 		fmt.Printf("Path \"%v\" found. Plase enter a valid path!\n", path)
@@ -294,9 +347,9 @@ func brute(chars []string, hashed string, jobs <-chan int, response chan<- bool)
 
 	for currentLength := range jobs {
 		// if len(jobs) == 0 {
-		// 	fmt.Println("Password not found! Password probably longer than specified length")
-		// 	fmt.Printf("\n[%v]\n", time.Since(now))
-		// 	os.Exit(1)
+		//  fmt.Println("Password not found! Password probably longer than specified length")
+		//  fmt.Printf("\n[%v]\n", time.Since(now))
+		//  os.Exit(1)
 		// }
 		counter := make([]int, currentLength)
 		password := make([]string, currentLength)
@@ -374,8 +427,6 @@ func wgenSetup(args [6]string, path string) {
 		}
 	}
 
-	//fmt.Println(chars)
-
 	//length of passwords to be generated
 	jobs := make(chan int, max-min)
 	response := make(chan bool, max-min)
@@ -393,7 +444,7 @@ func wgenSetup(args [6]string, path string) {
 	var finished []bool
 	for i := range response {
 		finished = append(finished, i)
-		if len(finished) >= max-min {
+		if len(finished) > max-min {
 			fmt.Println("Done")
 			fmt.Printf("\n[%v]\n", time.Since(now))
 			os.Exit(0)
@@ -455,7 +506,10 @@ func hash(text string, type_ string) string {
 		hash := sha1.Sum([]byte(text))
 		return hex.EncodeToString(hash[:])
 	case "sha256":
-		return "Work in progress"
+		h := sha256.New()
+		h.Write([]byte(text))
+		hash := h.Sum(nil)
+		return fmt.Sprintf("%x", hash)
 	}
 	return ""
 }
