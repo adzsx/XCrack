@@ -18,7 +18,8 @@ var (
 	//some strings to display
 	help string = `
 Xcrack,
-a tool for hash attacks and methods
+a tool for offline password attacks and functions
+
 
 Modes:
 -------------------------------------------------------------------------------------
@@ -26,6 +27,7 @@ Modes:
 hash:   Cracks a given hash with either a wordlist or brute force attack (default)
 list:   Generated a wordlist based on your preferences
 gen:    Generates a hash from a given string
+file:	Combine wordlists and generate a new list, with duplicates removed
 
 (mode must be the first argument)
 
@@ -33,35 +35,29 @@ gen:    Generates a hash from a given string
 
 
 
-Comming soon:
--------------------------------------------------------------------------------------
-
-zip:	Creates a hash value from a encrypted zip archive
-
--------------------------------------------------------------------------------------
-
-
-
-
 
 hash mode:
 -------------------------------------------------------------------------------------
 
- -p HASH:  (required) Sets the HASHed password
- -t TYPE:  specify the hash-TYPE (default: md5)
+Syntax:		xcrack (hash) <HASH> <TYPE> [options]
 
- -n:    numbers
- -l:    lowercase letters
- -L:    uppercase letters
- -s:    special Characters
+
+HASH:	   		Specify the hashed password 	(required)
+TYPE:			specify the hash-TYPE 			(default: md5)
+
+Options:
+
+	-n:			numbers							(default)
+ 	-l:			lowercase letters				(default)
+	-L:			uppercase letters
+	-s:			special Characters
  
- -m LENGTH:   min LENGTH of password
- -M LENGTH:   max LENGTH of password
+	-m LENGTH:	min LENGTH of password			(default: 1)
+	-M LENGTH:	max LENGTH of password 			(default: 8)
 
- -w PATH:  uses a wordlist in PATH instead of character preferences
+	-w PATH:	uses a wordlist in PATH instead of character preferences
 
 -------------------------------------------------------------------------------------
-
 
 
 
@@ -69,25 +65,48 @@ hash mode:
 list mode:
 -------------------------------------------------------------------------------------
 
- -f PATH:  (required) Stores wordlist in PATH
-    If file already exists, password will be appended
-    duplicates will not be removed
+Syntax:        xcrack list <path> [options]
 
- -n:    numbers
- -l:    lowercase letters
- -L:    uppercase letters
- -s:    special Characters
+PATH:	The location where the list is created		 	(required)
+		(if lsit exists, new element will be appended)
 
- -m LENGTH:   min LENGTH of password
- -M LENGTH:   max LENGTH of password
+Options:
+	-n:    numbers										(default)
+	-l:    lowercase letters							(default)
+	-L:    uppercase letters					
+	-s:    special Characters
 
+	-m LENGTH:   min LENGTH of password					(default: 1)
+	-M LENGTH:   max LENGTH of password					(default: 8)
+
+-------------------------------------------------------------------------------------
 
 
 
 
 gen mode:
- -t TYPE:   Specifies the type of the hash (default: md5)
- STRING:    Every other argument will be hashed with the specifies TYPE
+-------------------------------------------------------------------------------------
+
+Syntax:		xcrack gen [options]
+
+Options:
+	-t TYPE:   Specifies the type of the hash 				(default: md5)
+	STRING:    Every other argument will be hashed with the specified TYPE
+
+-------------------------------------------------------------------------------------
+
+
+
+
+file mode:
+-------------------------------------------------------------------------------------
+
+Syntax:		xcrack file <OUTPUT-FILE> <FILE1> <FILE2> <...>
+
+OUTPUT-FILE: 	Path to file where the new wordlist will be stored
+				(If path already exists the file will be overwritten)
+
+FILE:			File with elements to be sorted
 
 -------------------------------------------------------------------------------------
 
@@ -136,7 +155,7 @@ func main() {
 	args[0] = "Hash-Cracker"
 	args = append(args, "")
 
-	if args[1] != "hash" && args[1] != "list" && args[1] != "gen" && args[1] != "zip" {
+	if args[1] != "hash" && args[1] != "list" && args[1] != "gen" && args[1] != "file" && args[1] != "-h" {
 		mode = "hash"
 	} else if args[1] == "-h" {
 		fmt.Println(help)
@@ -147,7 +166,7 @@ func main() {
 
 	//specifies the default length
 	flags[4] = "1"
-	flags[5] = "16"
+	flags[5] = "8"
 
 	switch mode {
 	case "hash":
@@ -179,7 +198,7 @@ func main() {
 		}
 
 		//Display error message when hashed or type_ if not given
-		if len(args) < 4 {
+		if len(args) < 3 {
 			fmt.Println("Enter -h for help")
 			os.Exit(0)
 		}
@@ -192,7 +211,7 @@ func main() {
 		if isWordlist {
 			wordlist(hashed, type_, path)
 			fmt.Printf("\n[%v]\n", time.Since(now))
-		} else if len(args) > 6 {
+		} else if len(args) > 3 {
 			brute_force(flags, hashed, type_)
 		} else {
 			fmt.Println("Enter -h for help")
@@ -233,6 +252,10 @@ func main() {
 			if index > 1 && element != "-t" && args[index-1] != "-t" {
 				toHash = append(toHash, element)
 			}
+		}
+
+		if len(types) == 0 {
+			types = append(types, "md5")
 		}
 
 		for _, str := range toHash {
@@ -316,7 +339,7 @@ func brute_force(args [6]string, password string, type_ string) {
 	jobs := make(chan int, max-min)
 	result := make(chan bool)
 
-	for i := 0; i < max-min+1; i++ {
+	for i := 0; i < (max - min + 1); i++ {
 		go brute(chars, password, jobs, result)
 	}
 
