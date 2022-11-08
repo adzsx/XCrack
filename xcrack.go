@@ -39,7 +39,7 @@ file:	Combine wordlists and generate a new list, with duplicates removed
 hash mode:
 -------------------------------------------------------------------------------------
 
-Syntax:		xcrack (hash) <HASH> <TYPE> [options]
+Syntax:		xcrack (hash) <HASH> <TYPE> [OPTIONS]
 
 
 HASH:	   		Specify the hashed password 	(required)
@@ -65,7 +65,7 @@ Options:
 list mode:
 -------------------------------------------------------------------------------------
 
-Syntax:        xcrack list <path> [options]
+Syntax:        xcrack list <path> [OPTIONS]
 
 PATH:	The location where the list is created		 	(required)
 		(if lsit exists, new element will be appended)
@@ -87,7 +87,7 @@ Options:
 gen mode:
 -------------------------------------------------------------------------------------
 
-Syntax:		xcrack gen [options]
+Syntax:		xcrack gen [OPTIONS]
 
 Options:
 	-t TYPE:   Specifies the type of the hash 				(default: md5)
@@ -172,13 +172,14 @@ func main() {
 	case "hash":
 
 		// check for command line arguments
+		hashed = args[1]
+
+		if args[2] == "sha256" || args[2] == "md5" || args[2] == "sha1" {
+			type_ = args[2]
+		}
+
 		for index, element := range args {
 			switch element {
-			case "-t":
-				type_ = args[index+1]
-			case "-p":
-				hashed = args[index+1]
-
 			case "-w":
 				path = args[index+1]
 				isWordlist = true
@@ -197,8 +198,13 @@ func main() {
 			}
 		}
 
+		if flags[0] == "" && flags[1] == "" && flags[2] == "" && flags[3] == "" {
+			flags[0] = "-l"
+			flags[2] = "-n"
+		}
+
 		//Display error message when hashed or type_ if not given
-		if len(args) < 3 {
+		if len(args) < 2 {
 			fmt.Println("Enter -h for help")
 			os.Exit(0)
 		}
@@ -218,6 +224,7 @@ func main() {
 		}
 
 	case "list":
+		path = args[1]
 		for index, element := range args {
 			switch element {
 			case "-l":
@@ -232,15 +239,20 @@ func main() {
 				flags[4] = args[index+1]
 			case "-M":
 				flags[5] = args[index+1]
-			case "-p":
-				path = args[index+1]
 			}
 		}
+
+		if flags[0] == "" && flags[1] == "" && flags[2] == "" && flags[3] == "" {
+			flags[0] = "-l"
+			flags[2] = "-n"
+		}
+
 		if path == "" {
 			fmt.Println("You need to enter a path")
 		} else {
 			wgenSetup(flags, path)
 		}
+
 	case "gen":
 
 		for index, element := range args {
@@ -267,6 +279,9 @@ func main() {
 		}
 
 		fmt.Printf("\n[%v]\n", time.Since(now))
+
+	case "file":
+		fmt.Println("Work in progress")
 	}
 }
 
