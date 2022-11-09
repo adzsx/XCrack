@@ -51,6 +51,7 @@ Options:
  	-l:			lowercase letters				(default)
 	-L:			uppercase letters
 	-s:			special Characters
+	-c CHARS:	Only uses CHARS for the password
  
 	-m LENGTH:	min LENGTH of password			(default: 1)
 	-M LENGTH:	max LENGTH of password 			(default: 8)
@@ -75,6 +76,7 @@ Options:
 	-l:    lowercase letters							(default)
 	-L:    uppercase letters					
 	-s:    special Characters
+	-c CHARS:	Only uses CHARS for the password
 
 	-m LENGTH:   min LENGTH of password					(default: 1)
 	-M LENGTH:   max LENGTH of password					(default: 8)
@@ -135,6 +137,7 @@ FILE:			File with elements to be sorted
 	isWordlist bool   = false
 	path       string = "./wordlist.txt"
 	toHash     []string
+	files      []string
 
 	//characters for brute force mode
 	l_letters = [26]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
@@ -281,7 +284,11 @@ func main() {
 		fmt.Printf("\n[%v]\n", time.Since(now))
 
 	case "file":
-		fmt.Println("Work in progress")
+		output := args[2]
+		for _, j := range args[2:] {
+			files = append(files, j)
+		}
+		fmt.Printf("Output: %v, Input: %v", output, files)
 	}
 }
 
