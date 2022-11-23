@@ -7,7 +7,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -16,8 +15,7 @@ import (
 
 var (
 	//some strings to display
-	help string = `
-Xcrack,
+	help string = `Xcrack
 a tool for offline password attacks and functions
 
 
@@ -140,16 +138,16 @@ FILE:			File with elements to be sorted
 	files      []string
 
 	//characters for brute force mode
-	l_letters = [26]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
-	u_letters = [26]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
-	numbers   = [10]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
-	special   = [39]string{" ", "^", "´", "+", "#", "-", "+", ".", "\"", "<", "°", "!", "§", "$", "%", "&", "/", "(", ")", "=", "?", "`", "*", "'", "_", ":", ";", "′", "{", "[", "]", "}", "\\", ".", "~", "’", "–", "·"}
+	L_letters = [26]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
+	U_letters = [26]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
+	Numbers   = [10]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
+	Special   = [39]string{" ", "^", "´", "+", "#", "-", "+", ".", "\"", "<", "°", "!", "§", "$", "%", "&", "/", "(", ")", "=", "?", "`", "*", "'", "_", ":", ";", "′", "{", "[", "]", "}", "\\", ".", "~", "’", "–", "·"}
 
 	//Characters defined by flags
-	chars []string
+	Chars []string
 )
 
-var now = time.Now()
+var Now = time.Now()
 
 // setup and checking for arguments
 func main() {
@@ -219,7 +217,7 @@ func main() {
 		//start wordlist mode when -w is given
 		if isWordlist {
 			wordlist(hashed, type_, path)
-			fmt.Printf("\n[%v]\n", time.Since(now))
+			fmt.Printf("\n[%v]\n", time.Since(Now))
 		} else if len(args) > 3 {
 			brute_force(flags, hashed, type_)
 		} else {
@@ -253,7 +251,7 @@ func main() {
 		if path == "" {
 			fmt.Println("You need to enter a path")
 		} else {
-			wgenSetup(flags, path)
+			list.WgenSetup(flags, path)
 		}
 
 	case "gen":
@@ -281,7 +279,7 @@ func main() {
 			}
 		}
 
-		fmt.Printf("\n[%v]\n", time.Since(now))
+		fmt.Printf("\n[%v]\n", time.Since(Now))
 
 	case "file":
 		output := args[2]
@@ -298,7 +296,7 @@ func wordlist(password string, type_ string, path string) {
 	file, err := os.Open(path)
 	if err != nil {
 		fmt.Printf("Path \"%v\" found. Plase enter a valid path!\n", path)
-		fmt.Printf("\n[%v]\n", time.Since(now))
+		fmt.Printf("\n[%v]\n", time.Since(Now))
 		os.Exit(1)
 	} else {
 		fileScanner := bufio.NewScanner(file)
@@ -309,7 +307,7 @@ func wordlist(password string, type_ string, path string) {
 			data := fileScanner.Text()
 			if hash(data, type_) == password {
 				fmt.Printf("Password: %v \n", data)
-				fmt.Printf("\n[%v]\n", time.Since(now))
+				fmt.Printf("\n[%v]\n", time.Since(Now))
 				os.Exit(0)
 			}
 		}
@@ -328,23 +326,23 @@ func brute_force(args [6]string, password string, type_ string) {
 	check(err2)
 
 	if contains(args, "-n") {
-		for _, v := range numbers {
-			chars = append(chars, v)
+		for _, v := range Numbers {
+			Chars = append(Chars, v)
 		}
 	}
 	if contains(args, "-l") {
-		for _, v := range l_letters {
-			chars = append(chars, v)
+		for _, v := range L_letters {
+			Chars = append(Chars, v)
 		}
 	}
 	if contains(args, "-L") {
-		for _, v := range u_letters {
-			chars = append(chars, v)
+		for _, v := range U_letters {
+			Chars = append(Chars, v)
 		}
 	}
 	if contains(args, "-s") {
-		for _, v := range special {
-			chars = append(chars, v)
+		for _, v := range Special {
+			Chars = append(Chars, v)
 		}
 	}
 
@@ -362,7 +360,7 @@ func brute_force(args [6]string, password string, type_ string) {
 	result := make(chan bool)
 
 	for i := 0; i < (max - min + 1); i++ {
-		go brute(chars, password, jobs, result)
+		go brute(Chars, password, jobs, result)
 	}
 
 	for i := min; i <= max; i++ {
@@ -376,7 +374,7 @@ func brute_force(args [6]string, password string, type_ string) {
 		finished = append(finished, i)
 		if len(finished) >= max-min {
 			fmt.Println("Password not found")
-			fmt.Printf("\n[%v]\n", time.Since(now))
+			fmt.Printf("\n[%v]\n", time.Since(Now))
 			os.Exit(0)
 		}
 	}
@@ -393,7 +391,7 @@ func brute(chars []string, hashed string, jobs <-chan int, response chan<- bool)
 	for currentLength := range jobs {
 		// if len(jobs) == 0 {
 		//  fmt.Println("Password not found! Password probably longer than specified length")
-		//  fmt.Printf("\n[%v]\n", time.Since(now))
+		//  fmt.Printf("\n[%v]\n", time.Since(Now))
 		//  os.Exit(1)
 		// }
 		counter := make([]int, currentLength)
@@ -427,7 +425,7 @@ func brute(chars []string, hashed string, jobs <-chan int, response chan<- bool)
 			pwh := hash(pw, type_)
 			if pwh == hashed {
 				fmt.Printf("Password: %v\n", pw)
-				fmt.Printf("\n[%v]\n", time.Since(now))
+				fmt.Printf("\n[%v]\n", time.Since(Now))
 				os.Exit(0)
 			}
 
@@ -435,109 +433,6 @@ func brute(chars []string, hashed string, jobs <-chan int, response chan<- bool)
 
 	}
 	response <- false
-
-}
-
-func wgenSetup(args [6]string, path string) {
-	fmt.Println("Starting wordlist generation mode.")
-
-	//some variables for generating the wordlist
-	file, _ := os.Create(path)
-	min, err := strconv.Atoi(args[4])
-	max, err2 := strconv.Atoi(args[5])
-
-	//check errors in string conversion
-	check(err)
-	check(err2)
-
-	//Create list with characters included in the password
-	if contains(args, "-n") {
-		for _, v := range numbers {
-			chars = append(chars, v)
-		}
-	}
-	if contains(args, "-l") {
-		for _, v := range l_letters {
-			chars = append(chars, v)
-		}
-	}
-	if contains(args, "-L") {
-		for _, v := range u_letters {
-			chars = append(chars, v)
-		}
-	}
-	if contains(args, "-s") {
-		for _, v := range special {
-			chars = append(chars, v)
-		}
-	}
-
-	//length of passwords to be generated
-	jobs := make(chan int, max-min)
-	response := make(chan bool, max-min)
-
-	for i := 0; i < max-min+1; i++ {
-		go gen(chars, jobs, response, file)
-	}
-
-	for i := min; i <= max; i++ {
-		jobs <- i
-	}
-
-	close(jobs)
-
-	var finished []bool
-	for i := range response {
-		finished = append(finished, i)
-		if len(finished) > max-min {
-			fmt.Println("Done")
-			fmt.Printf("\n[%v]\n", time.Since(now))
-			os.Exit(0)
-		}
-	}
-}
-
-// Wordlist generation mode
-func gen(chars []string, jobs <-chan int, response chan<- bool, file *os.File) {
-	//chars = characters for password
-	//hashed = hashed password to crack
-	//length = length of characters in chars
-	//jobs = jobs for lengths for multiple gorutines
-
-	for currentLength := range jobs {
-		counter := make([]int, currentLength)
-		password := make([]string, currentLength)
-		counter[0] = -1
-		total := len(counter) * (len(chars) - 1)
-		for sum(counter) < total {
-
-			counter[0] += 1
-
-			for index, value := range counter {
-
-				if value > len(chars)-1 {
-					counter[index] = 0
-
-					if len(counter) > index+1 {
-
-						counter[index+1] += 1
-						continue
-
-					} else {
-						break
-					}
-				}
-			}
-
-			for index, value := range counter {
-				password[index] = chars[value]
-			}
-			pw := strings.Join(password[:], "")
-			io.WriteString(file, pw+"\n")
-		}
-
-	}
-	response <- true
 
 }
 
