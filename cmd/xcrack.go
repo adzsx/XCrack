@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	//some strings to display
+	// some strings to display
 	help string = `Xcrack
 a tool for offline password attacks and functions
 
@@ -123,14 +123,14 @@ FILE:			File with elements to be sorted
 ############################################
 `
 
-	//storing for flags in declaration of app (eg. -l -s, -m x -M y)
-	//password
+	// storing for flags in declaration of app (eg. -l -s, -m x -M y)
+	// password
 	hashed string
 
-	//Arguments entered in the command line
+	// Arguments entered in the command line
 	flags [6]string
 
-	//some arguments
+	// some arguments
 	mode       string = "hash"
 	type_      string = "md5"
 	types      []string
@@ -139,8 +139,13 @@ FILE:			File with elements to be sorted
 	toHash     []string
 	files      []string
 
-	//characters for brute force mode
-	//Characters defined by flags
+	// characters for brute force mode
+	L_letters = [26]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
+	U_letters = [26]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
+	Numbers   = [10]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
+	Special   = [39]string{" ", "^", "´", "+", "#", "-", "+", ".", "\"", "<", "°", "!", "§", "$", "%", "&", "/", "(", ")", "=", "?", "`", "*", "'", "_", ":", ";", "′", "{", "[", "]", "}", "\\", ".", "~", "’", "–", "·"}
+
+	// Characters defined by flags
 	Chars []string
 )
 
@@ -162,7 +167,7 @@ func main() {
 		mode = args[1]
 	}
 
-	//specifies the default length
+	// specifies the default length
 	flags[4] = "1"
 	flags[5] = "8"
 
@@ -201,7 +206,7 @@ func main() {
 			flags[2] = "-n"
 		}
 
-		//Display error message when hashed or type_ if not given
+		// Display error message when hashed or type_ if not given
 		if len(args) < 2 {
 			fmt.Println("Enter -h for help")
 			os.Exit(0)
@@ -211,7 +216,7 @@ func main() {
 			os.Exit(0)
 		}
 
-		//start wordlist mode when -w is given
+		// start wordlist mode when -w is given
 		if isWordlist {
 			wordlist(hashed, type_, path)
 			fmt.Printf("\n[%v]\n", time.Since(Now))
@@ -348,10 +353,10 @@ func brute_force(args [6]string, password string, type_ string) {
 		os.Exit(1)
 	}
 
-	//chars: all chars used in password
-	//password: hashed password
-	//type_: type of hash
-	//jobs: length to generate password
+	// chars: all chars used in password
+	// password: hashed password
+	// type_: type of hash
+	// jobs: length to generate password
 
 	jobs := make(chan int, max-min)
 	result := make(chan bool)
@@ -375,15 +380,14 @@ func brute_force(args [6]string, password string, type_ string) {
 			os.Exit(0)
 		}
 	}
-
 }
 
 // Brute forcer
 func brute(chars []string, hashed string, jobs <-chan int, response chan<- bool) {
-	//chars = characters for password
-	//hashed = hashed password to crack
-	//length = length of characters in chars
-	//jobs = jobs for lengths for multiple gorutines
+	// chars = characters for password
+	// hashed = hashed password to crack
+	// length = length of characters in chars
+	// jobs = jobs for lengths for multiple gorutines
 
 	for currentLength := range jobs {
 		// if len(jobs) == 0 {
@@ -400,7 +404,6 @@ func brute(chars []string, hashed string, jobs <-chan int, response chan<- bool)
 			counter[0] += 1
 
 			for index, value := range counter {
-
 				if value > len(chars)-1 {
 					counter[index] = 0
 
@@ -430,7 +433,6 @@ func brute(chars []string, hashed string, jobs <-chan int, response chan<- bool)
 
 	}
 	response <- false
-
 }
 
 // hashing function
