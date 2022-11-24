@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/adzsx/xcrack/pkg/check"
+	"github.com/adzsx/xcrack/pkg/format"
 	"github.com/adzsx/xcrack/pkg/list"
 )
 
@@ -19,6 +21,7 @@ var (
 	// some strings to display
 	help string = `Xcrack
 a tool for offline password attacks and functions
+For the entire documentation visit: https://adzsx.github.io/docs/xcrack
 
 
 Modes:
@@ -29,8 +32,6 @@ list:   Generated a wordlist based on your preferences
 gen:    Generates a hash from a given string
 file:	Combine wordlists and generate a new list, with duplicates removed
 
-(mode must be the first argument)
-
 -------------------------------------------------------------------------------------
 
 
@@ -39,24 +40,24 @@ file:	Combine wordlists and generate a new list, with duplicates removed
 hash mode:
 -------------------------------------------------------------------------------------
 
-Syntax:		xcrack (hash) <HASH> <TYPE> [OPTIONS]
+Syntax:			xcrack (hash) [OPTIONS]
 
 
-HASH:	   		Specify the hashed password 	(required)
-TYPE:			specify the hash-TYPE 			(default: md5)
+-p HASH:	   	Specify the hashed password 					required
+-t TYPE:		specify the hash-TYPE 							default: md5
 
 Options:
 
-	-n:			numbers							(default)
- 	-l:			lowercase letters				(default)
+	-n:			numbers											default
+ 	-l:			lowercase letters								default
 	-L:			uppercase letters
 	-s:			special Characters
 	-c CHARS:	Only uses CHARS for the password
  
-	-m LENGTH:	min LENGTH of password			(default: 1)
-	-M LENGTH:	max LENGTH of password 			(default: 8)
+	-m LENGTH:	min LENGTH of password							default: 1
+	-M LENGTH:	max LENGTH of password 							default: 8
 
-	-w PATH:	uses a wordlist in PATH instead of character preferences
+	-w PATH:	uses a wordlist in PATH
 
 -------------------------------------------------------------------------------------
 
@@ -66,20 +67,20 @@ Options:
 list mode:
 -------------------------------------------------------------------------------------
 
-Syntax:        xcrack list <path> [OPTIONS]
+Syntax:        	xcrack list [OPTIONS]
 
-PATH:	The location where the list is created		 	(required)
-		(if lsit exists, new element will be appended)
+-p PATH:		The location where the list is created		 	required
+					New element will be appended
 
 Options:
-	-n:    numbers										(default)
-	-l:    lowercase letters							(default)
-	-L:    uppercase letters					
-	-s:    special Characters
+	-n:    		numbers											default
+	-l:    		lowercase letters								default
+	-L:    		uppercase letters						
+	-s:    		special Characters
 	-c CHARS:	Only uses CHARS for the password
 
-	-m LENGTH:   min LENGTH of password					(default: 1)
-	-M LENGTH:   max LENGTH of password					(default: 8)
+	-m LENGTH:  min LENGTH of password							default: 1
+	-M LENGTH:  max LENGTH of password							default: 8
 
 -------------------------------------------------------------------------------------
 
@@ -89,11 +90,11 @@ Options:
 gen mode:
 -------------------------------------------------------------------------------------
 
-Syntax:		xcrack gen [OPTIONS]
+Syntax:			xcrack gen [OPTIONS]
 
 Options:
-	-t TYPE:   Specifies the type of the hash 				(default: md5)
-	STRING:    Every other argument will be hashed with the specified TYPE
+	-t TYPE:   	Specifies the type of the hash 					default: md5
+	STRING:   	Argument will be hashed with TYPE
 
 -------------------------------------------------------------------------------------
 
@@ -103,15 +104,15 @@ Options:
 file mode:
 -------------------------------------------------------------------------------------
 
-Syntax:		xcrack file <OUTPUT-FILE> <FILE1> <FILE2> <...>
+Syntax:			xcrack file [OPTIONS]
 
-OUTPUT-FILE: 	Path to file where the new wordlist will be stored
-				(If path already exists the file will be overwritten)
+-o PATH: 		Path to file new file
+					File will be overwritten
 
 FILE:			File with elements to be sorted
+					Doesn't need a flag
 
 -------------------------------------------------------------------------------------
-
 `
 
 	start string = `
@@ -137,16 +138,10 @@ FILE:			File with elements to be sorted
 	isWordlist bool   = false
 	path       string = "./wordlist.txt"
 	toHash     []string
-	files      []string
-
-	// characters for brute force mode
-	L_letters = [26]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
-	U_letters = [26]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
-	Numbers   = [10]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
-	Special   = [39]string{" ", "^", "´", "+", "#", "-", "+", ".", "\"", "<", "°", "!", "§", "$", "%", "&", "/", "(", ")", "=", "?", "`", "*", "'", "_", ":", ";", "′", "{", "[", "]", "}", "\\", ".", "~", "’", "–", "·"}
+	//files      []string
 
 	// Characters defined by flags
-	Chars []string
+	chars []string
 )
 
 var Now = time.Now()
@@ -284,11 +279,7 @@ func main() {
 		fmt.Printf("\n[%v]\n", time.Since(Now))
 
 	case "file":
-		output := args[2]
-		for _, j := range args[2:] {
-			files = append(files, j)
-		}
-		fmt.Printf("Output: %v, Input: %v", output, files)
+		// To Continue...
 	}
 }
 
@@ -324,29 +315,10 @@ func brute_force(args [6]string, password string, type_ string) {
 	min, err := strconv.Atoi(args[4])
 	max, err2 := strconv.Atoi(args[5])
 
-	check(err)
-	check(err2)
+	check.Err(err)
+	check.Err(err2)
 
-	if contains(args, "-n") {
-		for _, v := range Numbers {
-			Chars = append(Chars, v)
-		}
-	}
-	if contains(args, "-l") {
-		for _, v := range L_letters {
-			Chars = append(Chars, v)
-		}
-	}
-	if contains(args, "-L") {
-		for _, v := range U_letters {
-			Chars = append(Chars, v)
-		}
-	}
-	if contains(args, "-s") {
-		for _, v := range Special {
-			Chars = append(Chars, v)
-		}
-	}
+	chars = format.CharList(args)
 
 	if min > max {
 		fmt.Println("min length cant be longer than max length!")
@@ -362,7 +334,7 @@ func brute_force(args [6]string, password string, type_ string) {
 	result := make(chan bool)
 
 	for i := 0; i < (max - min + 1); i++ {
-		go brute(Chars, password, jobs, result)
+		go brute(chars, password, jobs, result)
 	}
 
 	for i := min; i <= max; i++ {
@@ -399,7 +371,7 @@ func brute(chars []string, hashed string, jobs <-chan int, response chan<- bool)
 		password := make([]string, currentLength)
 		counter[0] = -1
 		total := len(counter) * (len(chars) - 1)
-		for sum(counter) < total {
+		for check.Sum(counter) < total {
 
 			counter[0] += 1
 
@@ -451,28 +423,4 @@ func hash(text string, type_ string) string {
 		return fmt.Sprintf("%x", hash)
 	}
 	return ""
-}
-
-// in array checker
-func contains(s [6]string, element string) bool {
-	for _, v := range s {
-		if element == v {
-			return true
-		}
-	}
-	return false
-}
-
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
-func sum(arr []int) int {
-	total := 0
-	for _, v := range arr {
-		total += v
-	}
-	return total
 }
