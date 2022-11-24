@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/adzsx/xcrack/list"
+	"github.com/adzsx/xcrack/pkg/list"
 )
 
 var (
@@ -140,11 +140,6 @@ FILE:			File with elements to be sorted
 	files      []string
 
 	//characters for brute force mode
-	L_letters = [26]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
-	U_letters = [26]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
-	Numbers   = [10]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
-	Special   = [39]string{" ", "^", "´", "+", "#", "-", "+", ".", "\"", "<", "°", "!", "§", "$", "%", "&", "/", "(", ")", "=", "?", "`", "*", "'", "_", ":", ";", "′", "{", "[", "]", "}", "\\", ".", "~", "’", "–", "·"}
-
 	//Characters defined by flags
 	Chars []string
 )

@@ -6,9 +6,9 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
-	"github.com/adzsx/xcrack/format"
+	"github.com/adzsx/xcrack/pkg/format"
+	//"github.com/adzsx/xcrack/pkg/check"
 )
 
 var (
@@ -50,7 +50,6 @@ func WgenSetup(args [6]string, path string) {
 		finished = append(finished, i)
 		if len(finished) > max-min {
 			fmt.Println("Done")
-			fmt.Printf("\n[%v]\n", time.Since(main.Now))
 			os.Exit(0)
 		}
 	}
