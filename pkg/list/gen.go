@@ -6,7 +6,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/adzsx/xcrack/pkg/check"
 	"github.com/adzsx/xcrack/pkg/format"
