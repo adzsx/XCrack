@@ -7,6 +7,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/adzsx/xcrack/format"
+)
+
+var (
+	chars []string
 )
 
 func WgenSetup(args [6]string, path string) {
@@ -18,37 +24,19 @@ func WgenSetup(args [6]string, path string) {
 	max, err2 := strconv.Atoi(args[5])
 
 	//check errors in string conversion
-	check(err)
-	check(err2)
+	check.Err(err)
+	check.Err(err2)
 
 	//Create list with characters included in the password
-	if contains(args, "-n") {
-		for _, v := range main.Numbers {
-			main.Chars = append(main.Chars, v)
-		}
-	}
-	if contains(args, "-l") {
-		for _, v := range main.L_letters {
-			main.Chars = append(main.Chars, v)
-		}
-	}
-	if contains(args, "-L") {
-		for _, v := range main.U_letters {
-			main.Chars = append(main.Chars, v)
-		}
-	}
-	if contains(args, "-s") {
-		for _, v := range main.Special {
-			main.Chars = append(main.Chars, v)
-		}
-	}
+
+	chars = format.CharList(args)
 
 	//length of passwords to be generated
 	jobs := make(chan int, max-min)
 	response := make(chan bool, max-min)
 
 	for i := 0; i < max-min+1; i++ {
-		go gen(main.Chars, jobs, response, file)
+		go gen(chars, jobs, response, file)
 	}
 
 	for i := min; i <= max; i++ {
@@ -62,7 +50,7 @@ func WgenSetup(args [6]string, path string) {
 		finished = append(finished, i)
 		if len(finished) > max-min {
 			fmt.Println("Done")
-			fmt.Printf("\n[%v]\n", time.Since(now))
+			fmt.Printf("\n[%v]\n", time.Since(main.Now))
 			os.Exit(0)
 		}
 	}
