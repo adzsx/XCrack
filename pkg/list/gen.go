@@ -67,7 +67,7 @@ func gen(chars []string, jobs <-chan int, response chan<- bool, file *os.File) {
 		password := make([]string, currentLength)
 		counter[0] = -1
 		total := len(counter) * (len(chars) - 1)
-		for sum(counter) < total {
+		for check.Sum(counter) < total {
 
 			counter[0] += 1
 
@@ -95,27 +95,4 @@ func gen(chars []string, jobs <-chan int, response chan<- bool, file *os.File) {
 
 	}
 	response <- true
-}
-
-func contains(s [6]string, element string) bool {
-	for _, v := range s {
-		if element == v {
-			return true
-		}
-	}
-	return false
-}
-
-func checkErr(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
-func sum(arr []int) int {
-	total := 0
-	for _, v := range arr {
-		total += v
-	}
-	return total
 }
