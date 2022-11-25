@@ -4,31 +4,20 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/adzsx/xcrack/pkg/check"
-	"github.com/adzsx/xcrack/pkg/format"
 )
 
-var chars []string
-
-func WgenSetup(args [6]string, path string) {
+func WgenSetup(chars []string, path string, min int, max int) {
+	now := time.Now()
 	fmt.Println("Starting wordlist generation mode.")
 
 	// some variables for generating the wordlist
 	file, _ := os.Create(path)
-	min, err := strconv.Atoi(args[4])
-	max, err2 := strconv.Atoi(args[5])
-
-	// check errors in string conversion
-	check.Err(err)
-	check.Err(err2)
 
 	// Create list with characters included in the password
-
-	chars = format.CharList(args)
 
 	// length of passwords to be generated
 	jobs := make(chan int, max-min)
@@ -49,7 +38,7 @@ func WgenSetup(args [6]string, path string) {
 		finished = append(finished, i)
 		if len(finished) > max-min {
 			fmt.Println("Done")
-			fmt.Printf("\n[%v]\n", time.Since(time.Now()))
+			fmt.Printf("\n[%v]\n", time.Since(now))
 			os.Exit(0)
 		}
 	}

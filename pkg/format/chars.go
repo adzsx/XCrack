@@ -1,6 +1,8 @@
 package format
 
 import (
+	"strings"
+
 	"github.com/adzsx/xcrack/pkg/check"
 )
 
@@ -13,26 +15,112 @@ var (
 	special   = [39]string{" ", "^", "\u00b4", "+", "#", "-", "+", ".", "\"", "<", "°", "!", "§", "$", "%", "&", "/", "(", ")", "=", "?", "`", "*", "'", "_", ":", ";", "′", "{", "[", "]", "}", "\\", ".", "~", "’", "–", "·"}
 )
 
-func CharList(args [6]string) []string {
-	if check.InArr(args, "-n") {
+func charArr(args []string) []string {
+	if check.InSclice(args, "n") {
 		for _, v := range numbers {
 			chars = append(chars, v)
 		}
 	}
-	if check.InArr(args, "-l") {
+	if check.InSclice(args, "l") {
 		for _, v := range l_letters {
 			chars = append(chars, v)
 		}
 	}
-	if check.InArr(args, "-L") {
+	if check.InSclice(args, "L") {
 		for _, v := range u_letters {
 			chars = append(chars, v)
 		}
 	}
-	if check.InArr(args, "-s") {
+	if check.InSclice(args, "s") {
 		for _, v := range special {
 			chars = append(chars, v)
 		}
 	}
 	return chars
+}
+
+func Args(cmdIn []string) [6]string {
+	// final = [password, hash, mode, chars min, max]
+	var final [6]string
+	modeCount := 0
+
+	if check.InSclice(cmdIn, "help") || check.InSclice(cmdIn, "-h") || check.InSclice(cmdIn, "--help") && modeCount < 1 {
+		final[2] = "help"
+		return final
+	} else if check.InSclice(cmdIn, "hash") && modeCount < 1 {
+		final[2] = "hash"
+		modeCount++
+	} else if check.InSclice(cmdIn, "list") && modeCount < 1 {
+		final[2] = "list"
+		modeCount++
+	} else if check.InSclice(cmdIn, "gen") && modeCount < 1 {
+		final[2] = "gen"
+		modeCount++
+	}
+
+	for index, element := range cmdIn {
+		if element[0:1] == "-" && len(element) > 2 {
+			flags := strings.Split(element[1:], "")
+
+			chars = charArr(flags)
+		} else if element[0:1] == "-" {
+			switch element[1:2] {
+			case "p":
+				final[0] = cmdIn[index+1]
+
+			case "t":
+				final[1] = cmdIn[index+1]
+
+			case "l":
+				for _, char := range l_letters {
+					chars = append(chars, char)
+				}
+
+			case "L":
+				for _, char := range u_letters {
+					chars = append(chars, char)
+				}
+
+			case "n":
+				for _, char := range numbers {
+					chars = append(chars, char)
+				}
+
+			case "s":
+				for _, char := range special {
+					chars = append(chars, char)
+				}
+
+			case "m":
+				final[4] = cmdIn[index+1]
+
+			case "M":
+				final[5] = cmdIn[index+1]
+
+			case "c":
+				chars = append(chars, strings.Join(cmdIn[index+1:index+2], ""))
+			}
+		}
+	}
+
+	if len(chars) == 0 {
+		for _, char := range l_letters {
+			chars = append(chars, char)
+		}
+
+		for _, char := range numbers {
+			chars = append(chars, char)
+		}
+	}
+
+	final[3] = strings.Join(chars, "")
+
+	if final[4] == "" {
+		final[4] = "1"
+	}
+	if final[5] == "" {
+		final[5] = "8"
+	}
+
+	return final
 }

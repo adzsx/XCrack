@@ -1,20 +1,12 @@
 package main
 
 import (
-	"bufio"
-	"crypto/md5"
-	"crypto/sha1"
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"os"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/adzsx/xcrack/pkg/check"
 	"github.com/adzsx/xcrack/pkg/format"
-	"github.com/adzsx/xcrack/pkg/list"
 )
 
 var (
@@ -97,22 +89,6 @@ Options:
 	STRING:   	Argument will be hashed with TYPE
 
 -------------------------------------------------------------------------------------
-
-
-
-
-file mode:
--------------------------------------------------------------------------------------
-
-Syntax:			xcrack file [OPTIONS]
-
--o PATH: 		Path to file new file
-					File will be overwritten
-
-FILE:			File with elements to be sorted
-					Doesn't need a flag
-
--------------------------------------------------------------------------------------
 `
 
 	start string = `
@@ -126,7 +102,7 @@ FILE:			File with elements to be sorted
 
 	// storing for flags in declaration of app (eg. -l -s, -m x -M y)
 	// password
-	hashed string
+	password string
 
 	// Arguments entered in the command line
 	flags [6]string
@@ -142,285 +118,21 @@ FILE:			File with elements to be sorted
 
 	// Characters defined by flags
 	chars []string
+	Now   = time.Now()
 )
-
-var Now = time.Now()
 
 // setup and checking for arguments
 func main() {
 	fmt.Println(start)
 	args := os.Args
 	args[0] = "Hash-Cracker"
-	args = append(args, "")
 
-	if args[1] != "hash" && args[1] != "list" && args[1] != "gen" && args[1] != "file" && args[1] != "-h" {
-		mode = "hash"
-	} else if args[1] == "-h" {
+	if check.InSclice(args, "-h") || check.InSclice(args, "help") || check.InSclice(args, "--help") {
 		fmt.Println(help)
-		os.Exit(0)
-	} else {
-		mode = args[1]
 	}
 
-	// specifies the default length
-	flags[4] = "1"
-	flags[5] = "8"
-
-	switch mode {
-	case "hash":
-
-		// check for command line arguments
-		hashed = args[1]
-
-		if args[2] == "sha256" || args[2] == "md5" || args[2] == "sha1" {
-			type_ = args[2]
-		}
-
-		for index, element := range args {
-			switch element {
-			case "-w":
-				path = args[index+1]
-				isWordlist = true
-			case "-l":
-				flags[0] = args[index]
-			case "-L":
-				flags[1] = args[index]
-			case "-n":
-				flags[2] = args[index]
-			case "-s":
-				flags[3] = args[index]
-			case "-m":
-				flags[4] = args[index+1]
-			case "-M":
-				flags[5] = args[index+1]
-			}
-		}
-
-		if flags[0] == "" && flags[1] == "" && flags[2] == "" && flags[3] == "" {
-			flags[0] = "-l"
-			flags[2] = "-n"
-		}
-
-		// Display error message when hashed or type_ if not given
-		if len(args) < 2 {
-			fmt.Println("Enter -h for help")
-			os.Exit(0)
-		}
-		if hashed == "" {
-			fmt.Printf("You need to specify the hashed password\n")
-			os.Exit(0)
-		}
-
-		// start wordlist mode when -w is given
-		if isWordlist {
-			wordlist(hashed, type_, path)
-			fmt.Printf("\n[%v]\n", time.Since(Now))
-		} else if len(args) > 3 {
-			brute_force(flags, hashed, type_)
-		} else {
-			fmt.Println("Enter -h for help")
-		}
-
-	case "list":
-		path = args[1]
-		for index, element := range args {
-			switch element {
-			case "-l":
-				flags[0] = args[index]
-			case "-L":
-				flags[1] = args[index]
-			case "-n":
-				flags[2] = args[index]
-			case "-s":
-				flags[3] = args[index]
-			case "-m":
-				flags[4] = args[index+1]
-			case "-M":
-				flags[5] = args[index+1]
-			}
-		}
-
-		if flags[0] == "" && flags[1] == "" && flags[2] == "" && flags[3] == "" {
-			flags[0] = "-l"
-			flags[2] = "-n"
-		}
-
-		if path == "" {
-			fmt.Println("You need to enter a path")
-		} else {
-			list.WgenSetup(flags, path)
-		}
-
-	case "gen":
-
-		for index, element := range args {
-			if element == "-t" {
-				types = append(types, args[index+1])
-			}
-		}
-		for index, element := range args {
-			if index > 1 && element != "-t" && args[index-1] != "-t" {
-				toHash = append(toHash, element)
-			}
-		}
-
-		if len(types) == 0 {
-			types = append(types, "md5")
-		}
-
-		for _, str := range toHash {
-			for _, type_ := range types {
-				if str != "" {
-					fmt.Printf("\"%v\" (%v):    		%v\n", str, type_, hash(str, type_))
-				}
-			}
-		}
-
-		fmt.Printf("\n[%v]\n", time.Since(Now))
-
-	case "file":
-		// To Continue...
-	}
+	sets := format.Args(args)
+	fmt.Println(sets)
 }
 
 // starting wordlist mode
-func wordlist(password string, type_ string, path string) {
-	fmt.Println("Starting wordlist mode")
-	file, err := os.Open(path)
-	if err != nil {
-		fmt.Printf("Path \"%v\" found. Plase enter a valid path!\n", path)
-		fmt.Printf("\n[%v]\n", time.Since(Now))
-		os.Exit(1)
-	} else {
-		fileScanner := bufio.NewScanner(file)
-
-		fileScanner.Split(bufio.ScanLines)
-
-		for fileScanner.Scan() {
-			data := fileScanner.Text()
-			if hash(data, type_) == password {
-				fmt.Printf("Password: %v \n", data)
-				fmt.Printf("\n[%v]\n", time.Since(Now))
-				os.Exit(0)
-			}
-		}
-		fmt.Println("Password not found")
-	}
-	file.Close()
-}
-
-// setting up brute force mode
-func brute_force(args [6]string, password string, type_ string) {
-	fmt.Println("Starting brute force mode")
-	min, err := strconv.Atoi(args[4])
-	max, err2 := strconv.Atoi(args[5])
-
-	check.Err(err)
-	check.Err(err2)
-
-	chars = format.CharList(args)
-
-	if min > max {
-		fmt.Println("min length cant be longer than max length!")
-		os.Exit(1)
-	}
-
-	// chars: all chars used in password
-	// password: hashed password
-	// type_: type of hash
-	// jobs: length to generate password
-
-	jobs := make(chan int, max-min)
-	result := make(chan bool)
-
-	for i := 0; i < (max - min + 1); i++ {
-		go brute(chars, password, jobs, result)
-	}
-
-	for i := min; i <= max; i++ {
-		jobs <- i
-	}
-
-	close(jobs)
-
-	var finished []bool
-	for i := range result {
-		finished = append(finished, i)
-		if len(finished) >= max-min {
-			fmt.Println("Password not found")
-			fmt.Printf("\n[%v]\n", time.Since(Now))
-			os.Exit(0)
-		}
-	}
-}
-
-// Brute forcer
-func brute(chars []string, hashed string, jobs <-chan int, response chan<- bool) {
-	// chars = characters for password
-	// hashed = hashed password to crack
-	// length = length of characters in chars
-	// jobs = jobs for lengths for multiple gorutines
-
-	for currentLength := range jobs {
-		// if len(jobs) == 0 {
-		//  fmt.Println("Password not found! Password probably longer than specified length")
-		//  fmt.Printf("\n[%v]\n", time.Since(Now))
-		//  os.Exit(1)
-		// }
-		counter := make([]int, currentLength)
-		password := make([]string, currentLength)
-		counter[0] = -1
-		total := len(counter) * (len(chars) - 1)
-		for check.Sum(counter) < total {
-
-			counter[0] += 1
-
-			for index, value := range counter {
-				if value > len(chars)-1 {
-					counter[index] = 0
-
-					if len(counter) > index+1 {
-
-						counter[index+1] += 1
-						continue
-
-					} else {
-						break
-					}
-				}
-			}
-
-			for index, value := range counter {
-				password[index] = chars[value]
-			}
-			pw := strings.Join(password[:], "")
-			pwh := hash(pw, type_)
-			if pwh == hashed {
-				fmt.Printf("Password: %v\n", pw)
-				fmt.Printf("\n[%v]\n", time.Since(Now))
-				os.Exit(0)
-			}
-
-		}
-
-	}
-	response <- false
-}
-
-// hashing function
-func hash(text string, type_ string) string {
-	switch type_ {
-	case "md5":
-		hash := md5.Sum([]byte(text))
-		return hex.EncodeToString(hash[:])
-	case "sha1":
-		hash := sha1.Sum([]byte(text))
-		return hex.EncodeToString(hash[:])
-	case "sha256":
-		h := sha256.New()
-		h.Write([]byte(text))
-		hash := h.Sum(nil)
-		return fmt.Sprintf("%x", hash)
-	}
-	return ""
-}
