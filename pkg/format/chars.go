@@ -40,7 +40,7 @@ func charArr(args []string) []string {
 }
 
 func Args(cmdIn []string) [6]string {
-	// final = [password, hash, mode, chars min, max]
+	// final = [password/path, hash, mode, chars min, max]
 	var final [6]string
 	modeCount := 0
 
@@ -101,6 +101,15 @@ func Args(cmdIn []string) [6]string {
 				chars = append(chars, strings.Join(cmdIn[index+1:index+2], ""))
 			}
 		}
+	}
+	if final[1] == "" {
+		final[1] = "md5"
+	}
+
+	if final[2] == "" {
+		final[2] = "hash"
+	} else if final[2] == "list" && final[0] == "" {
+		final[0] = "./wordlist.txt"
 	}
 
 	if len(chars) == 0 {

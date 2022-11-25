@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
-	"time"
+	"strconv"
+	"strings"
 
 	"github.com/adzsx/xcrack/pkg/check"
+	"github.com/adzsx/xcrack/pkg/crack"
 	"github.com/adzsx/xcrack/pkg/format"
 )
 
@@ -100,25 +102,7 @@ Options:
 ############################################
 `
 
-	// storing for flags in declaration of app (eg. -l -s, -m x -M y)
-	// password
-	password string
-
-	// Arguments entered in the command line
-	flags [6]string
-
 	// some arguments
-	mode       string = "hash"
-	type_      string = "md5"
-	types      []string
-	isWordlist bool   = false
-	path       string = "./wordlist.txt"
-	toHash     []string
-	//files      []string
-
-	// Characters defined by flags
-	chars []string
-	Now   = time.Now()
 )
 
 // setup and checking for arguments
@@ -133,6 +117,16 @@ func main() {
 
 	sets := format.Args(args)
 	fmt.Println(sets)
+
+	if sets[2] == "hash" {
+		min, err := strconv.Atoi(sets[5])
+		check.Err(err)
+
+		max, err := strconv.Atoi(sets[5])
+		check.Err(err)
+
+		crack.BruteSetup(sets[0], sets[1], strings.Split(sets[3], ""), min, max)
+	}
 }
 
 // starting wordlist mode

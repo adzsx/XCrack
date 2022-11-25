@@ -1,4 +1,6 @@
-package hash
+// Cracking a hash with brute force
+
+package crack
 
 import (
 	"crypto/md5"
@@ -14,7 +16,7 @@ import (
 )
 
 // setting up brute force mode
-func bruteSetup(password string, type_ string, chars []string, min int, max int) {
+func BruteSetup(password string, htype string, chars []string, min int, max int) {
 	now := time.Now()
 	fmt.Println("Starting brute force mode")
 
@@ -27,7 +29,7 @@ func bruteSetup(password string, type_ string, chars []string, min int, max int)
 	result := make(chan bool)
 
 	for i := 0; i < (max - min + 1); i++ {
-		go brute(chars, password, jobs, result)
+		go brute(password, htype, chars, jobs, result)
 	}
 
 	for i := min; i <= max; i++ {
@@ -48,7 +50,8 @@ func bruteSetup(password string, type_ string, chars []string, min int, max int)
 }
 
 // Brute forcer
-func brute(chars []string, hashed string, jobs <-chan int, response chan<- bool) {
+func brute(password string, htype string, chars []string, jobs <-chan int, response chan<- bool) {
+	now := time.Now()
 	// chars = characters for password
 	// hashed = hashed password to crack
 	// length = length of characters in chars
@@ -61,7 +64,7 @@ func brute(chars []string, hashed string, jobs <-chan int, response chan<- bool)
 		//  os.Exit(1)
 		// }
 		counter := make([]int, currentLength)
-		password := make([]string, currentLength)
+		curPass := make([]string, currentLength)
 		counter[0] = -1
 		total := len(counter) * (len(chars) - 1)
 		for check.Sum(counter) < total {
@@ -84,11 +87,11 @@ func brute(chars []string, hashed string, jobs <-chan int, response chan<- bool)
 			}
 
 			for index, value := range counter {
-				password[index] = chars[value]
+				curPass[index] = chars[value]
 			}
-			pw := strings.Join(password[:], "")
-			pwh := hash(pw, type_)
-			if pwh == hashed {
+			pw := strings.Join(curPass[:], "")
+			pwh := Hash(pw, htype)
+			if pwh == password {
 				fmt.Printf("Password: %v\n", pw)
 				fmt.Printf("\n[%v]\n", time.Since(now))
 				os.Exit(0)
@@ -101,7 +104,7 @@ func brute(chars []string, hashed string, jobs <-chan int, response chan<- bool)
 }
 
 // hashing function
-func hash(text string, type_ string) string {
+func Hash(text string, type_ string) string {
 	switch type_ {
 	case "md5":
 		hash := md5.Sum([]byte(text))
