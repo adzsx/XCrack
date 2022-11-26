@@ -88,7 +88,7 @@ Syntax:			xcrack gen [OPTIONS]
 
 Options:
 	-t TYPE:   	Specifies the type of the hash 					default: md5
-	STRING:   	Argument will be hashed with TYPE
+	-p STRING:   Argument will be hashed with TYPE
 
 -------------------------------------------------------------------------------------
 `
@@ -118,14 +118,18 @@ func main() {
 	sets := format.Args(args)
 	fmt.Println(sets)
 
-	if sets[2] == "hash" {
+	if sets[0] == "hash" {
 		min, err := strconv.Atoi(sets[5])
 		check.Err(err)
 
 		max, err := strconv.Atoi(sets[5])
 		check.Err(err)
 
-		crack.BruteSetup(sets[0], sets[1], strings.Split(sets[3], ""), min, max)
+		crack.BruteSetup(sets[1], sets[2], strings.Split(sets[3], ""), min, max)
+	} else if sets[0] == "list" {
+		crack.Wordlist(sets[1], sets[2], sets[3])
+	} else if sets[0] == "gen" {
+		fmt.Printf("\n\"%v\" (%v):			%v\n", sets[1], sets[2], crack.Hash(sets[1], sets[2]))
 	}
 }
 

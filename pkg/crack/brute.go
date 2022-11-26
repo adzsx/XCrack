@@ -104,8 +104,8 @@ func brute(password string, htype string, chars []string, jobs <-chan int, respo
 }
 
 // hashing function
-func Hash(text string, type_ string) string {
-	switch type_ {
+func Hash(text string, htype string) string {
+	switch htype {
 	case "md5":
 		hash := md5.Sum([]byte(text))
 		return hex.EncodeToString(hash[:])
@@ -118,5 +118,5 @@ func Hash(text string, type_ string) string {
 		hash := h.Sum(nil)
 		return fmt.Sprintf("%x", hash)
 	}
-	return ""
+	return "Hash type not found"
 }

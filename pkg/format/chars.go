@@ -40,21 +40,21 @@ func charArr(args []string) []string {
 }
 
 func Args(cmdIn []string) [6]string {
-	// final = [password/path, hash, mode, chars min, max]
+	// final = [mode, password, hash, chars/path, min, max]
 	var final [6]string
 	modeCount := 0
 
 	if check.InSclice(cmdIn, "help") || check.InSclice(cmdIn, "-h") || check.InSclice(cmdIn, "--help") && modeCount < 1 {
-		final[2] = "help"
+		final[0] = "help"
 		return final
 	} else if check.InSclice(cmdIn, "hash") && modeCount < 1 {
-		final[2] = "hash"
+		final[0] = "hash"
 		modeCount++
 	} else if check.InSclice(cmdIn, "list") && modeCount < 1 {
-		final[2] = "list"
+		final[0] = "list"
 		modeCount++
 	} else if check.InSclice(cmdIn, "gen") && modeCount < 1 {
-		final[2] = "gen"
+		final[0] = "gen"
 		modeCount++
 	}
 
@@ -66,10 +66,10 @@ func Args(cmdIn []string) [6]string {
 		} else if element[0:1] == "-" {
 			switch element[1:2] {
 			case "p":
-				final[0] = cmdIn[index+1]
+				final[1] = cmdIn[index+1]
 
 			case "t":
-				final[1] = cmdIn[index+1]
+				final[2] = cmdIn[index+1]
 
 			case "l":
 				for _, char := range l_letters {
@@ -91,6 +91,9 @@ func Args(cmdIn []string) [6]string {
 					chars = append(chars, char)
 				}
 
+			case "w":
+				final[3] = cmdIn[index+1]
+
 			case "m":
 				final[4] = cmdIn[index+1]
 
@@ -102,14 +105,12 @@ func Args(cmdIn []string) [6]string {
 			}
 		}
 	}
-	if final[1] == "" {
-		final[1] = "md5"
+	if final[2] == "" {
+		final[2] = "md5"
 	}
 
-	if final[2] == "" {
-		final[2] = "hash"
-	} else if final[2] == "list" && final[0] == "" {
-		final[0] = "./wordlist.txt"
+	if final[0] == "" {
+		final[0] = "hash"
 	}
 
 	if len(chars) == 0 {
@@ -122,7 +123,9 @@ func Args(cmdIn []string) [6]string {
 		}
 	}
 
-	final[3] = strings.Join(chars, "")
+	if final[0] != "list" {
+		final[3] = strings.Join(chars, "")
+	}
 
 	if final[4] == "" {
 		final[4] = "1"

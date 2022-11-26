@@ -9,7 +9,11 @@ import (
 	"time"
 )
 
-func Wordlist(password string, type_ string, path string) {
+func Wordlist(password string, htype string, path string) {
+	if Hash("checking...", htype) == "Hash type not found" {
+		fmt.Println("The hash type was not found")
+		os.Exit(1)
+	}
 	now := time.Now()
 
 	fmt.Println("Starting wordlist mode")
@@ -24,7 +28,7 @@ func Wordlist(password string, type_ string, path string) {
 
 		for fileScanner.Scan() {
 			data := fileScanner.Text()
-			if Hash(data, type_) == password {
+			if Hash(data, htype) == password {
 				fmt.Printf("Password: %v \n", data)
 				fmt.Printf("\n[%v]\n", time.Since(now))
 				os.Exit(0)
