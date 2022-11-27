@@ -87,8 +87,8 @@ gen mode:
 Syntax:			xcrack gen [OPTIONS]
 
 Options:
-	-t TYPE:   	Specifies the type of the hash 					default: md5
-	-p STRING:   Argument will be hashed with TYPE
+	-t TYPE:	Specifies the type of the hash 					default: md5
+	-p STRING:  Argument will be hashed with TYPE
 
 -------------------------------------------------------------------------------------
 `
@@ -116,10 +116,10 @@ func main() {
 	}
 
 	sets := format.Args(args)
-	fmt.Println(sets)
+	// sets = [mode, password, hash type, chars, min, max]
 
 	if sets[0] == "hash" {
-		min, err := strconv.Atoi(sets[5])
+		min, err := strconv.Atoi(sets[4])
 		check.Err(err)
 
 		max, err := strconv.Atoi(sets[5])
@@ -132,5 +132,3 @@ func main() {
 		fmt.Printf("\n\"%v\" (%v):			%v\n", sets[1], sets[2], crack.Hash(sets[1], sets[2]))
 	}
 }
-
-// starting wordlist mode
