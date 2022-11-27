@@ -9,11 +9,25 @@ import (
 	"time"
 )
 
-func Wordlist(password string, htype string, path string) {
+func WlistSet(password string, htype string, paths []string) {
 	if Hash("checking...", htype) == "Hash type not found" {
 		fmt.Println("The hash type was not found")
 		os.Exit(1)
 	}
+
+	jobs := make(chan string, len(paths))
+	result := make(chan bool)
+
+	for i := 0; i < len(paths); i++ {
+		go wordlist(password, htype, jobs)
+	}
+
+	for i, path := range paths {
+		jobs <- path
+	}
+}
+
+func wordlist(password string, htype string, jobs chan string) {
 	now := time.Now()
 
 	fmt.Println("Starting wordlist mode")

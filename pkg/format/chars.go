@@ -42,6 +42,7 @@ func charArr(args []string) []string {
 func Args(cmdIn []string) [6]string {
 	// final = [mode, password, hash, chars/path, min, max]
 	var final [6]string
+	var lists []string
 	modeCount := 0
 
 	if check.InSclice(cmdIn, "help") || check.InSclice(cmdIn, "-h") || check.InSclice(cmdIn, "--help") && modeCount < 1 {
@@ -92,7 +93,7 @@ func Args(cmdIn []string) [6]string {
 				}
 
 			case "w":
-				final[3] = cmdIn[index+1]
+				lists = append(lists, cmdIn[index+1])
 
 			case "m":
 				final[4] = cmdIn[index+1]
@@ -123,8 +124,11 @@ func Args(cmdIn []string) [6]string {
 		}
 	}
 
-	if final[0] != "list" {
+	if len(lists) < 1 {
 		final[3] = strings.Join(chars, "")
+	} else {
+		final[3] = strings.Join(lists, ",")
+		final[0] = "list"
 	}
 
 	if final[4] == "" {
