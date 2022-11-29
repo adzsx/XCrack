@@ -129,6 +129,7 @@ func main() {
 	} else if sets[0] == "list" {
 		crack.WlistSet(sets[1], sets[2], strings.Split(sets[3], ","))
 	} else if sets[0] == "gen" {
+		fmt.Println(sets)
 		fmt.Printf("\n\"%v\" (%v):			%v\n", sets[1], sets[2], crack.Hash(sets[1], sets[2]))
 	}
 }

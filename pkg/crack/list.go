@@ -14,7 +14,7 @@ var (
 )
 
 func WlistSet(password string, htype string, paths []string) {
-	fmt.Println(paths)
+	fmt.Println("Starting wordlist mode")
 	if Hash("checking...", htype) == "Hash type not found" {
 		fmt.Println("The hash type was not found")
 		os.Exit(1)
@@ -33,6 +33,7 @@ func WlistSet(password string, htype string, paths []string) {
 
 	var finished []bool
 	for i := range result {
+		fmt.Println("Here")
 		finished = append(finished, i)
 		if len(finished) >= len(paths) {
 			fmt.Println("Password not found")
@@ -44,9 +45,6 @@ func WlistSet(password string, htype string, paths []string) {
 
 func wordlist(password string, htype string, jobs <-chan string, response chan<- bool) {
 	for path := range jobs {
-
-		fmt.Println("Starting wordlist mode")
-
 		file, err := os.Open(path)
 		if err != nil {
 			fmt.Printf("Path \"%v\" found. Plase enter a valid path!\n", path)
@@ -59,7 +57,6 @@ func wordlist(password string, htype string, jobs <-chan string, response chan<-
 
 		for fileScanner.Scan() {
 			data := fileScanner.Text()
-			fmt.Println(data)
 			if Hash(data, htype) == password {
 				fmt.Printf("Password: %v \n", data)
 				fmt.Printf("\n[%v]\n", time.Since(now))
