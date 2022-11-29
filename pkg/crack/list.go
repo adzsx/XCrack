@@ -33,7 +33,6 @@ func WlistSet(password string, htype string, paths []string) {
 
 	var finished []bool
 	for i := range result {
-		fmt.Println("Here")
 		finished = append(finished, i)
 		if len(finished) >= len(paths) {
 			fmt.Println("Password not found")

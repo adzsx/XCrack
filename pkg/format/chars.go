@@ -1,6 +1,8 @@
 package format
 
 import (
+	"fmt"
+	"os"
 	"strings"
 
 	"github.com/adzsx/xcrack/pkg/check"
@@ -41,6 +43,10 @@ func charArr(args []string) []string {
 
 func Args(cmdIn []string) [6]string {
 	// final = [mode, password, hash, chars/path, min, max]
+	if len(cmdIn) < 3 {
+		fmt.Println("Enter -h for help\n ")
+		os.Exit(1)
+	}
 	var final [6]string
 	var lists []string
 	modeCount := 0
