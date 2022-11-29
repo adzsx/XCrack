@@ -51,9 +51,6 @@ func Args(cmdIn []string) [6]string {
 	} else if check.InSclice(cmdIn, "hash") && modeCount < 1 {
 		final[0] = "hash"
 		modeCount++
-	} else if check.InSclice(cmdIn, "list") && modeCount < 1 {
-		final[0] = "list"
-		modeCount++
 	} else if check.InSclice(cmdIn, "gen") && modeCount < 1 {
 		final[0] = "gen"
 		modeCount++
