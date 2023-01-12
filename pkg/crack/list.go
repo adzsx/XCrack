@@ -17,7 +17,7 @@ func WlistSet(password string, htype string, paths []string) {
 	fmt.Println("Starting wordlist mode")
 	if Hash("checking...", htype) == "Hash type not found" {
 		fmt.Println("The hash type was not found")
-		os.Exit(1)
+		os.Exit(0)
 	}
 
 	jobs := make(chan string, len(paths))
@@ -47,7 +47,7 @@ func wordlist(password string, htype string, jobs <-chan string, response chan<-
 		file, err := os.Open(path)
 		if err != nil {
 			fmt.Printf("Path \"%v\" found. Plase enter a valid path!\n", path)
-			os.Exit(1)
+			os.Exit(0)
 		}
 
 		fileScanner := bufio.NewScanner(file)

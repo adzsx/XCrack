@@ -43,10 +43,6 @@ func charArr(args []string) []string {
 
 func Args(cmdIn []string) [6]string {
 	// final = [mode, password, hash, chars/path, min, max]
-	if len(cmdIn) < 3 {
-		fmt.Println("Enter -h for help\n ")
-		os.Exit(1)
-	}
 	var final [6]string
 	var lists []string
 	modeCount := 0
@@ -139,6 +135,11 @@ func Args(cmdIn []string) [6]string {
 	}
 	if final[5] == "" {
 		final[5] = "8"
+	}
+
+	if len(cmdIn) < 3 && final[0] != "help" {
+		fmt.Println("Enter -h for help\n ")
+		os.Exit(0)
 	}
 
 	return final
