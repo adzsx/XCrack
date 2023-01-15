@@ -84,4 +84,4 @@ func gen(chars []string, jobs <-chan int, response chan<- bool, file *os.File) {
 
 	}
 	response <- true
-}
+} 

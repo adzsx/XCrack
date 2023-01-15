@@ -14,7 +14,7 @@ import (
 var (
 	// some strings to display
 	help string = `Xcrack
-a tool for offline password attacks and functions
+a tool for offline password attacks
 For the entire documentation visit: https://adzsx.github.io/docs/xcrack
 
 
@@ -91,6 +91,16 @@ Options:
 	-p STRING:  Argument will be hashed with TYPE
 
 -------------------------------------------------------------------------------------
+
+
+
+
+test mode:
+-------------------------------------------------------------------------------------
+
+Syntax:			xcrack test
+
+-------------------------------------------------------------------------------------
 `
 
 	start string = `
@@ -101,8 +111,6 @@ Options:
 
 ############################################
 `
-
-	// some arguments
 )
 
 // setup and checking for arguments

@@ -91,7 +91,7 @@ func brute(password string, htype string, chars []string, jobs <-chan int, respo
 			}
 			pw := strings.Join(curPass[:], "")
 			pwh := Hash(pw, htype)
-			if pwh == password {
+			if pwh == password{
 				fmt.Printf("Password: %v\n", pw)
 				fmt.Printf("\n[%v]\n", time.Since(now))
 				os.Exit(0)

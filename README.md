@@ -1,8 +1,8 @@
-
 # XCrack
 
-A go based application for offline password attacks
+### A go based application for offline password attacks
 
+#
 
 ## Features
 
@@ -17,6 +17,7 @@ A go based application for offline password attacks
 
 *Comming soon
 
+#
 
 ## License
 
