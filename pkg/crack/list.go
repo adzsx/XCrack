@@ -15,6 +15,7 @@ var (
 
 func WlistSet(password string, htype string, paths []string) {
 	fmt.Println("Starting wordlist mode")
+
 	if Hash("checking...", htype) == "Hash type not found" {
 		fmt.Println("The hash type was not found")
 		os.Exit(0)

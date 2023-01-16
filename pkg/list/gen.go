@@ -12,7 +12,7 @@ import (
 
 func WgenSetup(chars []string, path string, min int, max int) {
 	now := time.Now()
-	fmt.Println("Starting wordlist generation mode.")
+	fmt.Println("Generating wordlist...")
 
 	// some variables for generating the wordlist
 	file, _ := os.Create(path)
