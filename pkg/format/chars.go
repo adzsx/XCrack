@@ -66,9 +66,21 @@ func Args(cmdIn []string) [6]string {
 		} else if element[0:1] == "-" {
 			switch element[1:2] {
 			case "p":
+
+				if len(cmdIn) <= index+1 {
+					fmt.Println("Please specify the password")
+					os.Exit(0)
+				}
+
 				final[1] = cmdIn[index+1]
 
 			case "t":
+
+				if len(cmdIn) <= index+1 {
+					fmt.Println("Please specify the type")
+					os.Exit(0)
+				}
+
 				final[2] = cmdIn[index+1]
 
 			case "l":
@@ -101,6 +113,12 @@ func Args(cmdIn []string) [6]string {
 				final[5] = cmdIn[index+1]
 
 			case "c":
+
+				if len(cmdIn) <= index+1 {
+					fmt.Println("Please specify the characters")
+					os.Exit(0)
+				}
+
 				chars = append(chars, strings.Join(cmdIn[index+1:index+2], ""))
 			}
 		}

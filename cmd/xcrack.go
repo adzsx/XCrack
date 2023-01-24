@@ -12,7 +12,6 @@ import (
 )
 
 var (
-	// some strings to display
 	help string = `Xcrack
 a tool for offline password attacks
 For the entire documentation visit: https://adzsx.github.io/docs/xcrack
@@ -32,6 +31,7 @@ file:	Combine wordlists and generate a new list, with duplicates removed
 
 
 hash mode:
+Hash cracking
 -------------------------------------------------------------------------------------
 
 Syntax:			xcrack (hash) [OPTIONS]
@@ -59,6 +59,7 @@ Options:
 
 
 list mode:
+Wordlist operations
 -------------------------------------------------------------------------------------
 
 Syntax:        	xcrack list [OPTIONS]
@@ -76,12 +77,16 @@ Options:
 	-m LENGTH:  min LENGTH of password							default: 1
 	-M LENGTH:  max LENGTH of password							default: 8
 
+	-i PATH:	input file at PATH for merging and cleaning		
+	-o PATH:	output file at PATH for merning and cleaning
+
 -------------------------------------------------------------------------------------
 
 
 
 
 gen mode:
+Hash generation
 -------------------------------------------------------------------------------------
 
 Syntax:			xcrack gen [OPTIONS]
@@ -103,7 +108,6 @@ Options:
 `
 )
 
-// setup and checking for arguments
 func main() {
 	fmt.Println(start)
 	args := os.Args
