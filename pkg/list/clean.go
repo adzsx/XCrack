@@ -21,6 +21,10 @@ func WlistClean(files []string, output string) {
 	_, err = io.WriteString(outfile, "This is a test")
 
 	check.Err(err)
+
+	for _, file := range files {
+		readList(file)
+	}
 }
 
 func readList(fileName string) {
