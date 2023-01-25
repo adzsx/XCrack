@@ -2,6 +2,7 @@ package list
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -14,16 +15,22 @@ var (
 )
 
 func WlistClean(files []string, output string) {
+	for _, file := range files {
+		readList(file)
+	}
+
+	items = rmDupl(items)
+
+	err := os.Remove(output)
+
+	fmt.Println(err)
+
 	outfile, err := os.Create(output)
 
 	check.Err(err)
 
-	_, err = io.WriteString(outfile, "This is a test")
-
-	check.Err(err)
-
-	for _, file := range files {
-		readList(file)
+	for _, item := range items {
+		_, _ = io.WriteString(outfile, item+"\n")
 	}
 }
 
@@ -42,4 +49,16 @@ func readList(fileName string) {
 	for fileScanner.Scan() {
 		items = append(items, fileScanner.Text())
 	}
+}
+
+func rmDupl(strSlice []string) []string {
+	allKeys := make(map[string]bool)
+	list := []string{}
+	for _, item := range strSlice {
+		if _, value := allKeys[item]; !value {
+			allKeys[item] = true
+			list = append(list, item)
+		}
+	}
+	return list
 }
