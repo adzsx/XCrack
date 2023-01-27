@@ -9,6 +9,7 @@ import (
 	"github.com/adzsx/xcrack/pkg/check"
 	"github.com/adzsx/xcrack/pkg/crack"
 	"github.com/adzsx/xcrack/pkg/format"
+	"github.com/adzsx/xcrack/test"
 )
 
 var (
@@ -111,7 +112,7 @@ Options:
 func main() {
 	fmt.Println(start)
 	args := os.Args
-	args[0] = "Hash-Cracker"
+	args[0] = "xcrack"
 
 	if check.InSclice(args, "-h") || check.InSclice(args, "help") || check.InSclice(args, "--help") {
 		fmt.Println(help)
@@ -120,6 +121,10 @@ func main() {
 	sets := format.Args(args)
 
 	// sets = [mode, password, hash type, chars, min, max]
+
+	if sets[0] == "test" {
+		test.Test()
+	}
 
 	if sets[0] == "hash" {
 		min, err := strconv.Atoi(sets[4])

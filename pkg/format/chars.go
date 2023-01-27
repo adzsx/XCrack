@@ -56,6 +56,9 @@ func Args(cmdIn []string) [6]string {
 	} else if check.InSclice(cmdIn, "gen") && modeCount < 1 {
 		final[0] = "gen"
 		modeCount++
+	} else if check.InSclice(cmdIn, "test") && modeCount < 1 {
+		final[0] = "test"
+		return final
 	}
 
 	for index, element := range cmdIn {
