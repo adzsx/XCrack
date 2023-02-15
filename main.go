@@ -136,7 +136,6 @@ func main() {
 	} else if sets[0] == "list" {
 
 		paths := strings.Split(sets[2], " ")
-		
 		output := paths[0]
 		paths = paths[1:]
 		list.WlistClean(paths, output)
