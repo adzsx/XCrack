@@ -9,7 +9,7 @@ import (
 	"github.com/adzsx/xcrack/pkg/check"
 	"github.com/adzsx/xcrack/pkg/crack"
 	"github.com/adzsx/xcrack/pkg/format"
-	"github.com/adzsx/xcrack/test"
+	"github.com/adzsx/xcrack/pkg/list"
 )
 
 var (
@@ -21,10 +21,9 @@ For the entire documentation visit: https://adzsx.github.io/docs/xcrack
 Modes:
 -------------------------------------------------------------------------------------
 
-hash:   Cracks a given hash with either a wordlist or brute force attack (default)
+crack:   Cracks a given hash with either a wordlist or brute force attack (default)
 list:   Generated a wordlist based on your preferences
-gen:    Generates a hash from a given string
-file:	Combine wordlists and generate a new list, with duplicates removed
+hash:    Generates a hash from a given string
 
 -------------------------------------------------------------------------------------
 
@@ -102,8 +101,8 @@ Options:
 	start string = `
 ############################################
 
-▀▄▀ █▀▀ █▀█ █▀█ █▀▀ █▄▀
-█ █ █▄▄ █▀▄ █▀█ █▄▄ █ █
+▀▄▀ █▀▀ █▀█ █▀█ █▀▀ █▄▀
+█ █ █▄▄ █▀▄ █▀█ █▄▄ █ █
 
 ############################################
 `
@@ -114,29 +113,34 @@ func main() {
 	args := os.Args
 	args[0] = "xcrack"
 
-	if check.InSclice(args, "-h") || check.InSclice(args, "help") || check.InSclice(args, "--help") {
-		fmt.Println(help)
-	}
-
 	sets := format.Args(args)
+	// sets = [mode, password, hash, chars, min, max]
+	// new = [mode, password, path, chars, hash, min, max]
 
-	// sets = [mode, password, hash type, chars, min, max]
+	if sets[0] == "help"{
+		fmt.Println(help)
 
-	if sets[0] == "test" {
-		test.Test()
-	}
-
-	if sets[0] == "hash" {
-		min, err := strconv.Atoi(sets[4])
+	} else if sets[0] == "crack" {
+		min, err := strconv.Atoi(sets[5])
 		check.Err(err)
 
-		max, err := strconv.Atoi(sets[5])
+		max, err := strconv.Atoi(sets[6])
 		check.Err(err)
 
-		crack.BruteSetup(sets[1], sets[2], strings.Split(sets[3], ""), min, max)
+		if sets[2] != ""{
+			crack.WlistSet(sets[1], sets[4], strings.Split(sets[2], " "))
+		}
+
+
+		crack.BruteSetup(sets[1], sets[4], strings.Split(sets[3], ""), min, max)
 	} else if sets[0] == "list" {
-		crack.WlistSet(sets[1], sets[2], strings.Split(sets[3], ","))
-	} else if sets[0] == "gen" {
-		fmt.Printf("\n\"%v\" (%v):			%v\n", sets[1], sets[2], crack.Hash(sets[1], sets[2]))
+
+		paths := strings.Split(sets[2], " ")
+		output := paths[0]
+		paths = paths[1:]
+		list.WlistClean(paths, output)
+
+	} else if sets[0] == "hash" {
+		fmt.Printf("\n\"%v\" (%v):			%v\n", sets[1], sets[4], crack.Hash(sets[1], sets[4]))
 	}
 }

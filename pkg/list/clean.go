@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"time"
 
 	"github.com/adzsx/xcrack/pkg/check"
 )
@@ -15,6 +16,8 @@ var (
 )
 
 func WlistClean(files []string, output string) {
+	now := time.Now()
+
 	for _, file := range files {
 		readList(file)
 	}
@@ -23,7 +26,7 @@ func WlistClean(files []string, output string) {
 
 	err := os.Remove(output)
 
-	fmt.Println(err)
+	check.Err(err)
 
 	outfile, err := os.Create(output)
 
@@ -32,6 +35,9 @@ func WlistClean(files []string, output string) {
 	for _, item := range items {
 		_, _ = io.WriteString(outfile, item+"\n")
 	}
+
+	fmt.Printf("\n[%v]\n", time.Since(now))
+	os.Exit(0)
 }
 
 func readList(fileName string) {
