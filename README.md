@@ -6,16 +6,14 @@
 
 ## Features
 
-- Hash Cracking with:
-    - Brute force
-    - Wordlists
+* Hash Cracking with:
+    * Brute force
+    * Wordlists
 
-- Wordlists:
-    - Generation
-    - Merging*
-    - Cleaning*
-
-*Comming soon
+* Wordlists:
+    * Generation
+    * Merging
+    * Cleaning
 
 #
 
@@ -24,13 +22,14 @@
 
 Modes:<br>
 
-hash:   Cracks a given hash with either a wordlist or brute force attack (default)<br>
-list:   Generated a wordlist based on your preferences<br>
-gen:    Generates a hash from a given string<br>
-file:	Combine wordlists and generate a new list, with duplicates removed<br>
+crack:  Crack hashes with brute force or a wordlist
+list:   Generation, cleaning and merging of wordlists 
+hash:   Generate a hash from an input
+
+
 <br><br>
-hash mode:<br>
-Syntax:			xcrack (hash) [OPTIONS]<br>
+crack mode: (default)<br>
+Syntax:			xcrack (crack) [OPTIONS]<br>
 <br>
 Flags:
 <br>
@@ -48,14 +47,12 @@ Flags:
 <br>
 -w PATH:	uses a wordlist in PATH<br>
 <br>
-Example `xcrack hash -t sha1 -l -n -M 6 -p 6367c48dd193d56ea7b0baad25b19455e529f5ee`<br>
-<br>
 <br>
 list mode:<br>
 Syntax:        	xcrack list [OPTIONS]<br>
 <br>
 Flags:<br>
--p PATH:		The location where the list is created		 	required<br>
+-o PATH:		The location where the list is created		 	required<br>
 New element will be appended<br>
 <br>
 -n:    		numbers											default<br>
@@ -67,9 +64,11 @@ New element will be appended<br>
 -m LENGTH:  min LENGTH of password							default: 1<br>
 -M LENGTH:  max LENGTH of password							default: 8<br>
 <br>
-Example `xcrack list -p ~/Documents/wordlist.txt -l -L -M 6`<br>
+-i PATH:    Input file for cleaning and merging
+-o PATH:    Output file for merging
 <br>
-gen mode:<br>
+<br>
+hash mode:<br>
 Syntax:			xcrack gen [OPTIONS]<br>
 <br>
 Flags:<br>
@@ -81,4 +80,4 @@ Flags:<br>
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[GNU Piblic License](https://choosealicense.com/licenses/gpl-3.0/)
