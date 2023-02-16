@@ -24,9 +24,7 @@ func WlistClean(files []string, output string) {
 
 	items = rmDupl(items)
 
-	err := os.Remove(output)
-
-	check.Err(err)
+	os.Remove(output)
 
 	outfile, err := os.Create(output)
 

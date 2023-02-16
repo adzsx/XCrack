@@ -29,7 +29,10 @@ func WlistSet(password string, htype string, paths []string) {
 	}
 
 	for _, path := range paths {
-		jobs <- path
+		err, _ := os.Open(path)
+		if err != nil{
+			jobs <- path
+		}
 	}
 
 	var finished []bool

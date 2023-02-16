@@ -129,10 +129,10 @@ func main() {
 
 		if sets[2] != ""{
 			crack.WlistSet(sets[1], sets[4], strings.Split(sets[2], " "))
+		} else {
+			crack.BruteSetup(sets[1], sets[4], strings.Split(sets[3], ""), min, max)
 		}
 
-
-		crack.BruteSetup(sets[1], sets[4], strings.Split(sets[3], ""), min, max)
 	} else if sets[0] == "list" {
 
 		paths := strings.Split(sets[2], " ")
