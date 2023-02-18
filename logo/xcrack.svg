@@ -25,15 +25,15 @@
      inkscape:deskcolor="#505050"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="2.1946697"
-     inkscape:cx="470.2302"
-     inkscape:cy="708.30703"
+     inkscape:zoom="0.77593293"
+     inkscape:cx="308.01631"
+     inkscape:cy="583.16896"
      inkscape:window-width="1880"
      inkscape:window-height="1040"
      inkscape:window-x="1940"
      inkscape:window-y="20"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1" />
+     inkscape:current-layer="layer2" />
   <defs
      id="defs2">
     <linearGradient
@@ -121,20 +121,21 @@
        xml:space="preserve"
        style="font-size:20.2075px;fill:#3f0386;fill-opacity:1;stroke:none;stroke-width:76.3748;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none"
        x="79.599174"
-       y="222.61018"
+       y="201.74837"
        id="text8382"
        inkscape:label="crack"><tspan
          sodipodi:role="line"
          id="tspan8380"
          style="fill:#3f0386;fill-opacity:1;stroke-width:76.3748"
          x="79.599174"
-         y="222.61018">crack</tspan></text>
+         y="201.74837">crack</tspan></text>
   </g>
   <g
      inkscape:label="X"
      inkscape:groupmode="layer"
      id="layer1"
-     style="display:inline">
+     style="display:inline"
+     sodipodi:insensitive="true">
     <text
        xml:space="preserve"
        style="font-size:207.973px;display:inline;fill:url(#linearGradient15772);fill-opacity:1;stroke:none;stroke-width:786.039;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none"
