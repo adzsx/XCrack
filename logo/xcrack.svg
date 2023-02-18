@@ -27,7 +27,7 @@
      showgrid="false"
      inkscape:zoom="1.5518659"
      inkscape:cx="353.76769"
-     inkscape:cy="667.26128"
+     inkscape:cy="667.90567"
      inkscape:window-width="1880"
      inkscape:window-height="1040"
      inkscape:window-x="1940"
@@ -119,16 +119,16 @@
      style="display:inline">
     <text
        xml:space="preserve"
-       style="font-size:20.2075px;fill:#3f0386;fill-opacity:1;stroke:none;stroke-width:76.3748;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none"
-       x="79.599174"
-       y="213.27992"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:20.2075px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';fill:#3f0386;fill-opacity:1;stroke:none;stroke-width:76.3748;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none"
+       x="74.143135"
+       y="222.16127"
        id="text8382"
        inkscape:label="crack"><tspan
          sodipodi:role="line"
          id="tspan8380"
-         style="fill:#3f0386;fill-opacity:1;stroke-width:76.3748"
-         x="79.599174"
-         y="213.27992">crack</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';fill:#3f0386;fill-opacity:1;stroke-width:76.3748"
+         x="74.143135"
+         y="222.16127">crack</tspan></text>
   </g>
   <g
      inkscape:label="X"
