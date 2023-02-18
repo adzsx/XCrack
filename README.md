@@ -4,17 +4,9 @@ XCrack is a selection of tools for offline password attacks suck as hash crackin
 
 
 ## Documentation
-
-<<<<<<< HEAD
 >crack:  Crack hashes with brute force or a wordlist
 >list:   Generation, cleaning and merging of wordlists 
 >hash:   Generate a hash from an input
-=======
-Modes:  
-* crack: Crack hashes with brute force or a wordlist
-* list: Generation, cleaning and merging of wordlists
-* hash: Generate a hash from an input
->>>>>>> 2ea0292a76a750365f8c31ea010f048a4e02c581
 
 
   

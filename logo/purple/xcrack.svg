@@ -7,7 +7,7 @@
    viewBox="0 0 210 297"
    version="1.1"
    id="svg5"
-   sodipodi:docname="logo.svg"
+   sodipodi:docname="xcrack.svg"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -25,9 +25,9 @@
      inkscape:deskcolor="#505050"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="0.54866744"
-     inkscape:cx="714.45828"
-     inkscape:cy="494.83526"
+     inkscape:zoom="0.77593293"
+     inkscape:cx="461.38008"
+     inkscape:cy="485.22235"
      inkscape:window-width="1880"
      inkscape:window-height="1040"
      inkscape:window-x="1940"
@@ -108,8 +108,8 @@
        id="linearGradient17879"
        x1="132.62549"
        y1="209.30565"
-       x2="70.806137"
-       y2="209.91452"
+       x2="107.11459"
+       y2="211.7291"
        gradientUnits="userSpaceOnUse" />
   </defs>
   <g
@@ -119,16 +119,16 @@
      style="display:inline">
     <text
        xml:space="preserve"
-       style="font-size:30.5401px;fill:url(#linearGradient17879);fill-opacity:1;stroke:none;stroke-width:115.427;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none"
+       style="font-size:30.5401px;fill:#3f0386;fill-opacity:1;stroke:none;stroke-width:115.427;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none"
        x="66.611092"
-       y="220.11273"
+       y="222.50687"
        id="text8382"
        inkscape:label="crack"><tspan
          sodipodi:role="line"
          id="tspan8380"
-         style="fill:url(#linearGradient17879);fill-opacity:1;stroke-width:115.427"
+         style="fill:#3f0386;fill-opacity:1;stroke-width:115.427"
          x="66.611092"
-         y="220.11273">crack</tspan></text>
+         y="222.50687">crack</tspan></text>
   </g>
   <g
      inkscape:label="X"
