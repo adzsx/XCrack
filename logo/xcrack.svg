@@ -25,9 +25,9 @@
      inkscape:deskcolor="#505050"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="0.77593293"
-     inkscape:cx="461.38008"
-     inkscape:cy="485.22235"
+     inkscape:zoom="2.1946697"
+     inkscape:cx="470.2302"
+     inkscape:cy="708.30703"
      inkscape:window-width="1880"
      inkscape:window-height="1040"
      inkscape:window-x="1940"
@@ -101,7 +101,7 @@
        y1="56.245266"
        x2="65.670074"
        y2="205.02643"
-       gradientTransform="translate(3.0237256e-6)" />
+       gradientTransform="translate(2.702417e-6)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient17877"
@@ -119,16 +119,16 @@
      style="display:inline">
     <text
        xml:space="preserve"
-       style="font-size:30.5401px;fill:#3f0386;fill-opacity:1;stroke:none;stroke-width:115.427;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none"
-       x="66.611092"
-       y="222.50687"
+       style="font-size:25.3807px;fill:#3f0386;fill-opacity:1;stroke:none;stroke-width:95.927;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none"
+       x="73.096458"
+       y="222.55846"
        id="text8382"
        inkscape:label="crack"><tspan
          sodipodi:role="line"
          id="tspan8380"
-         style="fill:#3f0386;fill-opacity:1;stroke-width:115.427"
-         x="66.611092"
-         y="222.50687">crack</tspan></text>
+         style="fill:#3f0386;fill-opacity:1;stroke-width:95.927"
+         x="73.096458"
+         y="222.55846">crack</tspan></text>
   </g>
   <g
      inkscape:label="X"
@@ -137,7 +137,7 @@
      style="display:inline">
     <text
        xml:space="preserve"
-       style="font-size:207.973px;fill:url(#linearGradient15772);fill-opacity:1;stroke:none;stroke-width:786.039;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none"
+       style="font-size:207.973px;display:inline;fill:url(#linearGradient15772);fill-opacity:1;stroke:none;stroke-width:786.039;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none"
        x="44.063908"
        y="222.74637"
        id="text2895"><tspan
