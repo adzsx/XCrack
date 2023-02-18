@@ -22,9 +22,9 @@
 
 Modes:<br>
 
-crack:  Crack hashes with brute force or a wordlist
-list:   Generation, cleaning and merging of wordlists 
-hash:   Generate a hash from an input
+>crack:  Crack hashes with brute force or a wordlist
+>list:   Generation, cleaning and merging of wordlists 
+>hash:   Generate a hash from an input
 
 
 <br><br>
