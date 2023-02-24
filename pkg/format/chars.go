@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	chars []string
+	chars  []string
 	output string
 
 	l_letters = [26]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
@@ -17,10 +17,12 @@ var (
 	numbers   = [10]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
 	special   = [39]string{" ", "^", "\u00b4", "+", "#", "-", "+", ".", "\"", "<", "°", "!", "§", "$", "%", "&", "/", "(", ")", "=", "?", "`", "*", "'", "_", ":", ";", "′", "{", "[", "]", "}", "\\", ".", "~", "’", "–", "·"}
 )
+
 /*
 final = [mode, password, path, chars, hash, min, max]
 
 modes:
+
 	help:	Shows the help message
 	crack:	For cracking passwords (default)
 	list:	List operations:
@@ -29,11 +31,12 @@ modes:
 							Wordlist cleaning
 	hash:	Generate hashes
 
-
 password:
+
 	hashed password
 
 path:
+
 	path for wordlist for:
 							Cracking
 							Generation
@@ -42,8 +45,8 @@ path:
 							Merging (Different paths seperated by space, output is 1.)
 
 Chars:
-	Chars for cracking/wordlist generation
 
+	Chars for cracking/wordlist generation
 */
 func Args(cmdIn []string) [7]string {
 	// final = [mode, password, path, chars, hash, min, max]
@@ -62,7 +65,6 @@ func Args(cmdIn []string) [7]string {
 		final[0] = "hash"
 	}
 
-
 	for index, element := range cmdIn {
 		if element[0:1] == "-" {
 			switch element[1:2] {
@@ -75,7 +77,6 @@ func Args(cmdIn []string) [7]string {
 
 				final[1] = cmdIn[index+1]
 
-
 			case "t":
 				if len(cmdIn) <= index+1 {
 					fmt.Println("Please specify the type")
@@ -83,7 +84,6 @@ func Args(cmdIn []string) [7]string {
 				}
 
 				final[4] = cmdIn[index+1]
-			
 
 			case "c":
 				if len(cmdIn) <= index+1 {
@@ -112,11 +112,9 @@ func Args(cmdIn []string) [7]string {
 				for _, char := range special {
 					chars = append(chars, char)
 				}
-				
+
 			case "o":
 				output = cmdIn[index+1]
-			case "i":
-				lists = append(lists, cmdIn[index+1])
 
 			case "w":
 				lists = append(lists, cmdIn[index+1])
@@ -150,7 +148,11 @@ func Args(cmdIn []string) [7]string {
 
 	final[3] = strings.Join(chars, "")
 
-	final[2] = output + " " + strings.Join(lists, " ")
+	if final[0] == "file" {
+		final[2] = output + " " + strings.Join(lists, " ")
+	} else {
+		strings.Join(lists, " ")
+	}
 
 	if final[5] == "" {
 		final[5] = "1"

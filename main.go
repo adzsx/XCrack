@@ -114,7 +114,6 @@ func main() {
 	args[0] = "xcrack"
 
 	sets := format.Args(args)
-	// sets = [mode, password, hash, chars, min, max]
 	// new = [mode, password, path, chars, hash, min, max]
 
 	if sets[0] == "help"{
@@ -128,7 +127,7 @@ func main() {
 		check.Err(err)
 
 		if sets[2] != ""{
-			crack.WlistSet(sets[1], sets[4], strings.Split(sets[2], " "))
+			crack.WlistSet(sets[1], sets[4], strings.Split(sets[2], " "))  
 		} else {
 			crack.BruteSetup(sets[1], sets[4], strings.Split(sets[3], ""), min, max)
 		}
