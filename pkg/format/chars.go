@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/adzsx/xcrack/pkg/check"
+	"github.com/luc1dph0b1a/xcrack/pkg/check"
 )
 
 var (

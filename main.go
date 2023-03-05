@@ -6,16 +6,15 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/adzsx/xcrack/pkg/check"
-	"github.com/adzsx/xcrack/pkg/crack"
-	"github.com/adzsx/xcrack/pkg/format"
-	"github.com/adzsx/xcrack/pkg/list"
+	"github.com/luc1dph0b1a/xcrack/pkg/check"
+	"github.com/luc1dph0b1a/xcrack/pkg/crack"
+	"github.com/luc1dph0b1a/xcrack/pkg/format"
+	"github.com/luc1dph0b1a/xcrack/pkg/list"
 )
 
 var (
 	help string = `Xcrack
-a tool for offline password attacks
-For the entire documentation visit: https://adzsx.github.io/docs/xcrack
+a tool for offline password attacks.
 
 
 Modes:

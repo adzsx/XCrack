@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/adzsx/xcrack/pkg/check"
+	"github.com/luc1dph0b1a/xcrack/pkg/check"
 )
 
 // setting up brute force mode

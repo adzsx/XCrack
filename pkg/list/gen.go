@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/adzsx/xcrack/pkg/check"
+	"github.com/luc1dph0b1a/xcrack/pkg/check"
 )
 
 func WgenSetup(chars []string, path string, min int, max int) {
