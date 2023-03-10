@@ -54,7 +54,7 @@ Example: ``xcrack hash -f "xcrack" -t sha1``
 ##  Contribution
 If you want to contribute to the project, feel free to open an issue on this repo with code imrovements or feature ideas. 
 
-If you want to contribute on the long run, write me an E-Mail at luc1dph0b1a@proton.me or from my [website](https://luc1dph0b1a.github.io/#contact)
+If you want to contribute on the long run, write me an E-Mail at adzsx@proton.me or from my [website](https://adzsx.github.io/#contact)
 
 # 
 #### [GPL License](https://choosealicense.com/licenses/gpl-3.0/)
