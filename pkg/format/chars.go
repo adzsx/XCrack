@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/luc1dph0b1a/xcrack/pkg/check"
+	"github.com/adzsx/xcrack/pkg/check"
 )
 
 var (
@@ -48,9 +48,9 @@ Chars:
 
 	Chars for cracking/wordlist generation
 */
-func Args(cmdIn []string) [7]string {
-	// final = [mode, password, path, chars, hash, min, max]
-	var final [7]string
+func Args(cmdIn []string) [8]string {
+	// final = [mode, password, path, chars, hash, min, max, optional arguments]
+	var final [8]string
 	var lists []string
 
 	if check.InSclice(cmdIn, "help") || check.InSclice(cmdIn, "-h") || check.InSclice(cmdIn, "--help") {
@@ -136,7 +136,7 @@ func Args(cmdIn []string) [7]string {
 		final[0] = "crack"
 	}
 
-	if len(chars) == 0 {
+	if len(chars) == 0 && final[0] != "list" {
 		for _, char := range l_letters {
 			chars = append(chars, char)
 		}
@@ -148,8 +148,13 @@ func Args(cmdIn []string) [7]string {
 
 	final[3] = strings.Join(chars, "")
 
-	if final[0] == "file" {
-		final[2] = output + " " + strings.Join(lists, " ")
+	if final[0] == "list" {
+		if len(lists) > 0 {
+			final[2] = output + " " + strings.Join(lists, " ")
+		} else {
+			final[2] = output
+		}
+
 	} else {
 		strings.Join(lists, " ")
 	}
@@ -166,5 +171,13 @@ func Args(cmdIn []string) [7]string {
 		os.Exit(0)
 	}
 
+	if final[0] == "list" && final[2] == "" {
+		if len(chars) > 0 {
+			fmt.Println("Pleace specify the output file")
+		} else {
+			fmt.Println("Please specify the input and output files")
+		}
+		os.Exit(1)
+	}
 	return final
 }

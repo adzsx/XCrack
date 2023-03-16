@@ -13,43 +13,42 @@ XCrack is a selection of tools for offline password attacks suck as hash crackin
 Syntax: ``xcrack (crack) [Flags] ``
 
 Flags:  
-> -p:	HASH: Specify the hashed password required  
->	-t:	TYPE: specify the hash-TYPE default: md5  
->-n: 	numbers default  
+>-p HASH:   Specify the hashed password required  
+>-t TYPE:   specify the hash-TYPE default: md5  
+>-n: 	    numbers default  
 >-l: 		lowercase letters default  
->-L: 	uppercase letters  
->-s: 	special Characters  
->-c: 	CHARS: Only uses CHARS for the password  
+>-L: 	    uppercase letters  
+>-s:        special Characters  
+>-c	CHARS:  Only uses CHARS for the password  
   
->-m:	LENGTH: min LENGTH of password default: 1 -M LENGTH: max LENGTH of password default: 8  
->-w 	PATH: uses a wordlist in PATH  
-Example: ``xcrack -p fc24957e58927ade2522e35c23411de4f07f473e -t sha1 -l -M 6``
+>-m	LENGTH: min LENGTH of password default: 1
+>-M LENGTH: max LENGTH of password default: 8  
+
+>-w	PATH:   uses a wordlist in PATH  
 
 
 ### List mode
 Syntax: ``xcrack list [Flags] ``
 
 Flags:  
->-n: 	numbers default  
->-l: 		lowercase letters default  
->-L: 	uppercase letters  
->-s: 	special Characters  
->-c: 	CHARS: Only uses CHARS for the password  
+>-n: 	    numbers default  
+>-l: 	    lowercase letters default  
+>-L: 	    uppercase letters  
+>-s: 	    special Characters  
+>-c CHARS:  Only uses CHARS for the password  
   
->-m 	LENGTH: min LENGTH of password default: 1  
->-M 	LENGTH: max LENGTH of password default: 8  
+>-m LENGTH  min LENGTH of password default: 1  
+>-M LENGTH  max LENGTH of password default: 8  
   
->-i: 		PATH: Input file for cleaning and merging
->-o:	PATH: Path for output file
-Example: ``xcrack list -l -L -M 6 -o ./wordlist.txt``
+>-w PATH    Input file for cleaning and merging
+>-o PATH:   Output file for wordlist generation, cleaning and merging
 
 ### Hash mode
 Syntax: xcrack hash [Flags]  
 
 Flags:  
->-t: 	TYPE: Specifies the type of the hash default: md5  
->-p: 	STRING: Argument will be hashed with TYPE
-Example: ``xcrack hash -f "xcrack" -t sha1``
+>-t	TYPE:   Specifies the type of the hash default: md5  
+>-p STRING: Argument will be hashed with TYPE
 
 ##  Contribution
 If you want to contribute to the project, feel free to open an issue on this repo with code imrovements or feature ideas. 

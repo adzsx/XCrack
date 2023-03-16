@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/luc1dph0b1a/xcrack/pkg/check"
+	"github.com/adzsx/xcrack/pkg/check"
 )
 
 var (

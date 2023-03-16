@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/luc1dph0b1a/xcrack/pkg/check"
+	"github.com/adzsx/xcrack/pkg/check"
 )
 
 func WgenSetup(chars []string, path string, min int, max int) {
@@ -84,4 +84,4 @@ func gen(chars []string, jobs <-chan int, response chan<- bool, file *os.File) {
 
 	}
 	response <- true
-} 
+}

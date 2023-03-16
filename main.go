@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/luc1dph0b1a/xcrack/pkg/check"
-	"github.com/luc1dph0b1a/xcrack/pkg/crack"
-	"github.com/luc1dph0b1a/xcrack/pkg/format"
-	"github.com/luc1dph0b1a/xcrack/pkg/list"
+	"github.com/adzsx/xcrack/pkg/check"
+	"github.com/adzsx/xcrack/pkg/crack"
+	"github.com/adzsx/xcrack/pkg/format"
+	"github.com/adzsx/xcrack/pkg/list"
 )
 
 var (
@@ -33,13 +33,13 @@ hash mode:
 Hash cracking
 -------------------------------------------------------------------------------------
 
-Syntax:			xcrack (hash) [OPTIONS]
+Syntax:			xcrack (hash) [flags]
 
 
 -p HASH:	   	Specify the hashed password 					required
 -t TYPE:		specify the hash-TYPE 							default: md5
 
-Options:
+flags:
 
 	-n:			numbers											default
  	-l:			lowercase letters								default
@@ -61,23 +61,20 @@ list mode:
 Wordlist operations
 -------------------------------------------------------------------------------------
 
-Syntax:        	xcrack list [OPTIONS]
+Syntax:        	xcrack list [flags]
 
--p PATH:		The location where the list is created		 	required
-					New element will be appended
-
-Options:
-	-n:    		numbers											default
-	-l:    		lowercase letters								default
+flags:
+	-n:    		numbers											
+	-l:    		lowercase letters								
 	-L:    		uppercase letters						
 	-s:    		special Characters
 	-c CHARS:	Only uses CHARS for the password
 
-	-m LENGTH:  min LENGTH of password							default: 1
-	-M LENGTH:  max LENGTH of password							default: 8
+	-m LENGTH:  min LENGTH of password							
+	-M LENGTH:  max LENGTH of password							
 
-	-i PATH:	input file at PATH for merging and cleaning		
-	-o PATH:	output file at PATH for merning and cleaning
+	-w PATH:	input file at PATH for merning and cleaning
+	-o PATH:	output file at PATH for generating, merning and cleaning
 
 -------------------------------------------------------------------------------------
 
@@ -88,9 +85,9 @@ gen mode:
 Hash generation
 -------------------------------------------------------------------------------------
 
-Syntax:			xcrack gen [OPTIONS]
+Syntax:			xcrack gen flags]
 
-Options:
+flags:
 	-t TYPE:	Specifies the type of the hash 					default: md5
 	-p STRING:  Argument will be hashed with TYPE
 
@@ -115,7 +112,7 @@ func main() {
 	sets := format.Args(args)
 	// new = [mode, password, path, chars, hash, min, max]
 
-	if sets[0] == "help"{
+	if sets[0] == "help" {
 		fmt.Println(help)
 
 	} else if sets[0] == "crack" {
@@ -125,18 +122,29 @@ func main() {
 		max, err := strconv.Atoi(sets[6])
 		check.Err(err)
 
-		if sets[2] != ""{
-			crack.WlistSet(sets[1], sets[4], strings.Split(sets[2], " "))  
+		if sets[2] != "" {
+			crack.WlistSet(sets[1], sets[4], strings.Split(sets[2], " "))
 		} else {
 			crack.BruteSetup(sets[1], sets[4], strings.Split(sets[3], ""), min, max)
 		}
 
 	} else if sets[0] == "list" {
+		min, err := strconv.Atoi(sets[5])
+		check.Err(err)
+
+		max, err := strconv.Atoi(sets[6])
+		check.Err(err)
 
 		paths := strings.Split(sets[2], " ")
 		output := paths[0]
 		paths = paths[1:]
-		list.WlistClean(paths, output)
+
+		if sets[2] == "" {
+			list.WlistClean(paths, output)
+		} else {
+			fmt.Println(strings.Split(sets[3], ""))
+			list.WgenSetup(strings.Split(sets[3], ""), output, min, max)
+		}
 
 	} else if sets[0] == "hash" {
 		fmt.Printf("\n\"%v\" (%v):			%v\n", sets[1], sets[4], crack.Hash(sets[1], sets[4]))

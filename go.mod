@@ -1,3 +1,3 @@
-module github.com/luc1dph0b1a/xcrack
+module github.com/adzsx/xcrack
 
 go 1.19
