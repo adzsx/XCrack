@@ -10,6 +10,7 @@ import (
 	"github.com/adzsx/xcrack/pkg/crack"
 	"github.com/adzsx/xcrack/pkg/format"
 	"github.com/adzsx/xcrack/pkg/list"
+	"github.com/adzsx/xcrack/test"
 )
 
 var (
@@ -148,5 +149,7 @@ func main() {
 
 	} else if sets[0] == "hash" {
 		fmt.Printf("\n\"%v\" (%v):			%v\n", sets[1], sets[4], crack.Hash(sets[1], sets[4]))
+	} else if sets[0] == "test" {
+		test.TestAll()
 	}
 }

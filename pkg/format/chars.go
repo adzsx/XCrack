@@ -48,9 +48,9 @@ Chars:
 
 	Chars for cracking/wordlist generation
 */
-func Args(cmdIn []string) [8]string {
-	// final = [mode, password, path, chars, hash, min, max, optional arguments]
-	var final [8]string
+func Args(cmdIn []string) [7]string {
+	// final = [mode, password/test function, path, chars, hash, min, max]
+	var final [7]string
 	var lists []string
 
 	if check.InSclice(cmdIn, "help") || check.InSclice(cmdIn, "-h") || check.InSclice(cmdIn, "--help") {
@@ -63,6 +63,13 @@ func Args(cmdIn []string) [8]string {
 		final[0] = "list"
 	} else if check.InSclice(cmdIn, "hash") && final[0] == "" {
 		final[0] = "hash"
+	} else if check.InSclice(cmdIn, "test") && final[0] == "" {
+		final[0] = "test"
+		if len(cmdIn) > 2 {
+			final[1] = cmdIn[2]
+		}
+
+		return final
 	}
 
 	for index, element := range cmdIn {
