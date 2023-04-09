@@ -56,14 +56,14 @@ func Args(cmdIn []string) [7]string {
 	if check.InSclice(cmdIn, "help") || check.InSclice(cmdIn, "-h") || check.InSclice(cmdIn, "--help") {
 		final[0] = "help"
 		return final
-	} else if check.InSclice(cmdIn, "crack") && final[0] == "" {
+	} else if cmdIn[1] == "crack" && final[0] == "" {
 		final[0] = "crack"
 
-	} else if check.InSclice(cmdIn, "list") && final[0] == "" {
+	} else if cmdIn[1] == "list" && final[0] == "" {
 		final[0] = "list"
-	} else if check.InSclice(cmdIn, "hash") && final[0] == "" {
+	} else if cmdIn[1] == "hash" && final[0] == "" {
 		final[0] = "hash"
-	} else if check.InSclice(cmdIn, "test") && final[0] == "" {
+	} else if cmdIn[1] == "test" && final[0] == "" {
 		final[0] = "test"
 		if len(cmdIn) > 2 {
 			final[1] = cmdIn[2]

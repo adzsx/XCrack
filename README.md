@@ -51,9 +51,9 @@ Flags:
 >-p STRING: Argument will be hashed with TYPE
 
 ##  Contribution
-If you want to contribute to the project, feel free to open an issue on this repo with code imrovements or feature ideas. 
+If you want to contribute to the project, feel free to fork this repo with code imrovements. 
 
-If you want to contribute on the long run, write me an E-Mail at adzsx@proton.me or from my [website](https://adzsx.github.io/#contact)
+If you want to contribute on the long run, contact me at adzsx@proton.me or my [website](https://adzsx.github.io/#contact)
 
 # 
 #### [GPL License](https://choosealicense.com/licenses/gpl-3.0/)

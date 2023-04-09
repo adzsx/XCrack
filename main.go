@@ -110,6 +110,11 @@ func main() {
 	args := os.Args
 	args[0] = "xcrack"
 
+	if len(args) < 2 {
+		fmt.Println("Enter -h for help\n ")
+		os.Exit(0)
+	}
+
 	sets := format.Args(args)
 	// new = [mode, password, path, chars, hash, min, max]
 
@@ -150,6 +155,10 @@ func main() {
 	} else if sets[0] == "hash" {
 		fmt.Printf("\n\"%v\" (%v):			%v\n", sets[1], sets[4], crack.Hash(sets[1], sets[4]))
 	} else if sets[0] == "test" {
-		test.TestAll()
+		if sets[1] == "" {
+			test.TestAll()
+		} else {
+			test.TestMode(sets[1])
+		}
 	}
 }
