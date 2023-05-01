@@ -7,66 +7,79 @@ import (
 	"fmt"
 	"os"
 	"time"
+
+	"github.com/adzsx/xcrack/pkg/format"
 )
 
 var (
-	now = time.Now()
+	now      = time.Now()
+	finished bool
 )
 
-func WlistSet(password string, htype string, paths []string) {
-	fmt.Println("Starting wordlist mode")
+// Cracking with wordlists
+func WlistSet(query format.Query) {
 
-	if Hash("checking...", htype) == "Hash type not found" {
+	fmt.Println("Starting wordlist mode")
+	if Hash("checking...", query.Hash) == "Hash type not found" {
 		fmt.Println("The hash type was not found")
 		os.Exit(0)
 	}
 
-	jobs := make(chan string, len(paths))
-	result := make(chan bool, len(paths))
+	// Jobs for different files
+	jobs := make(chan string, len(query.Inputs))
 
-	for i := 0; i < len(paths); i++ {
-		go wordlist(password, htype, jobs, result)
+	for i := 0; i < len(query.Inputs); i++ {
+		go wordlist(query.Password, query.Hash, jobs, &finished)
 	}
 
-	for _, path := range paths {
+	for _, path := range query.Inputs {
 		err, _ := os.Open(path)
-		if err != nil{
+		if err != nil {
 			jobs <- path
 		}
 	}
 
-	var finished []bool
-	for i := range result {
-		finished = append(finished, i)
-		if len(finished) >= len(paths) {
+	for {
+		if !finished {
 			fmt.Println("Password not found")
 			fmt.Printf("\n[%v]\n", time.Since(now))
-			os.Exit(0)
+			return
+		} else if finished {
+			return
 		}
 	}
 }
 
-func wordlist(password string, htype string, jobs <-chan string, response chan<- bool) {
+// Open wordlist and try every password in there.
+func wordlist(password string, htype string, jobs <-chan string, finished *bool) {
+
+	// Iterate over files available
 	for path := range jobs {
 		file, err := os.Open(path)
 		if err != nil {
 			fmt.Printf("Path \"%v\" found. Plase enter a valid path!\n", path)
-			os.Exit(0)
+			return
 		}
 
+		// File Scanner
 		fileScanner := bufio.NewScanner(file)
 
 		fileScanner.Split(bufio.ScanLines)
 
+		// For each line
 		for fileScanner.Scan() {
+
+			// Crack
 			data := fileScanner.Text()
 			if Hash(data, htype) == password {
 				fmt.Printf("Password: %v \n", data)
 				fmt.Printf("\n[%v]\n", time.Since(now))
-				os.Exit(0)
+				*finished = true
+				return
+
 			}
 		}
-		response <- false
 		file.Close()
 	}
+	*finished = false
 }

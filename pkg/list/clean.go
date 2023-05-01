@@ -4,29 +4,29 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"time"
 
 	"github.com/adzsx/xcrack/pkg/check"
+	"github.com/adzsx/xcrack/pkg/format"
 )
 
 var (
 	items []string
 )
 
-func WlistClean(files []string, output string) {
+func WlistClean(query format.Query) {
 	now := time.Now()
 
-	for _, file := range files {
+	for _, file := range query.Inputs {
 		readList(file)
 	}
 
 	items = rmDupl(items)
 
-	os.Remove(output)
+	os.Remove(query.Output)
 
-	outfile, err := os.Create(output)
+	outfile, err := os.Create(query.Output)
 
 	check.Err(err)
 
@@ -39,7 +39,7 @@ func WlistClean(files []string, output string) {
 }
 
 func readList(fileName string) {
-	_, err := ioutil.ReadFile(fileName)
+	_, err := os.ReadFile(fileName)
 
 	check.Err(err)
 

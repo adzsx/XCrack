@@ -13,12 +13,13 @@ import (
 	"time"
 
 	"github.com/adzsx/xcrack/pkg/check"
+	"github.com/adzsx/xcrack/pkg/format"
 )
 
 // setting up brute force mode
-func BruteSetup(password string, htype string, chars []string, min int, max int) {
+func BruteSetup(query format.Query) {
 
-	if password == "" {
+	if query.Password == "" {
 		fmt.Println("Please specify the password")
 		os.Exit(0)
 	}
@@ -31,23 +32,27 @@ func BruteSetup(password string, htype string, chars []string, min int, max int)
 	// type_: type of hash
 	// jobs: length to generate password
 
-	jobs := make(chan int, max-min)
+	// Jobs (cores) for each length on cpu
+	jobs := make(chan int, query.Max-query.Min)
 	result := make(chan bool)
 
-	for i := 0; i < (max - min + 1); i++ {
-		go brute(password, htype, chars, jobs, result)
+	// Cracking
+	for i := 0; i < (query.Max - query.Min + 1); i++ {
+		go brute(query.Password, query.Hash, query.Chars, jobs, result)
 	}
 
-	for i := min; i <= max; i++ {
+	// Gettings results
+	for i := query.Min; i <= query.Max; i++ {
 		jobs <- i
 	}
 
 	close(jobs)
 
+	// Filtering for reqults, exif if not found
 	var finished []bool
 	for i := range result {
 		finished = append(finished, i)
-		if len(finished) >= max-min {
+		if len(finished) >= query.Max-query.Min {
 			fmt.Println("Password not found")
 			fmt.Printf("\n[%v]\n", time.Since(now))
 			os.Exit(0)
@@ -58,17 +63,8 @@ func BruteSetup(password string, htype string, chars []string, min int, max int)
 // Brute forcer
 func brute(password string, htype string, chars []string, jobs <-chan int, response chan<- bool) {
 	now := time.Now()
-	// chars = characters for password
-	// hashed = hashed password to crack
-	// length = length of characters in chars
-	// jobs = jobs for lengths for multiple gorutines
 
 	for currentLength := range jobs {
-		// if len(jobs) == 0 {
-		//  fmt.Println("Password not found! Password probably longer than specified length")
-		//  fmt.Printf("\n[%v]\n", time.Since(Now))
-		//  os.Exit(1)
-		// }
 		counter := make([]int, currentLength)
 		curPass := make([]string, currentLength)
 		counter[0] = -1
@@ -109,7 +105,7 @@ func brute(password string, htype string, chars []string, jobs <-chan int, respo
 	response <- false
 }
 
-// hashing function
+// hashing function, (Here for faster results)
 func Hash(text string, htype string) string {
 	switch htype {
 	case "md5":

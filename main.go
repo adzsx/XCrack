@@ -3,10 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	"strconv"
-	"strings"
 
-	"github.com/adzsx/xcrack/pkg/check"
 	"github.com/adzsx/xcrack/pkg/crack"
 	"github.com/adzsx/xcrack/pkg/format"
 	"github.com/adzsx/xcrack/pkg/list"
@@ -115,50 +112,35 @@ func main() {
 		os.Exit(0)
 	}
 
-	sets := format.Args(args)
-	// new = [mode, password, path, chars, hash, min, max]
+	query := format.Args(args)
+	// query = mode, password, input/output files, hash type, min length,
 
-	if sets[0] == "help" {
+  fmt.Println(query)
+
+	if query.Mode == "help" {
 		fmt.Println(help)
 
-	} else if sets[0] == "crack" {
-		min, err := strconv.Atoi(sets[5])
-		check.Err(err)
-
-		max, err := strconv.Atoi(sets[6])
-		check.Err(err)
-
-		if sets[2] != "" {
-			crack.WlistSet(sets[1], sets[4], strings.Split(sets[2], " "))
+		// Crack, if possible with wordlist
+	} else if query.Mode == "crack" {
+		if len(query.Inputs) == 0 {
+			crack.BruteSetup(query)
 		} else {
-			crack.BruteSetup(sets[1], sets[4], strings.Split(sets[3], ""), min, max)
+			crack.WlistSet(query)
 		}
 
-	} else if sets[0] == "list" {
-		min, err := strconv.Atoi(sets[5])
-		check.Err(err)
-
-		max, err := strconv.Atoi(sets[6])
-		check.Err(err)
-
-		paths := strings.Split(sets[2], " ")
-		output := paths[0]
-		paths = paths[1:]
-
-		if sets[2] == "" {
-			list.WlistClean(paths, output)
+		// List mode (Generate, clean or merge) wordlists
+	} else if query.Mode == "list" {
+		if len(query.Chars) == 0 {
+			list.WlistClean(query)
 		} else {
-			fmt.Println(strings.Split(sets[3], ""))
-			list.WgenSetup(strings.Split(sets[3], ""), output, min, max)
+			list.WgenSetup(query)
 		}
 
-	} else if sets[0] == "hash" {
-		fmt.Printf("\n\"%v\" (%v):			%v\n", sets[1], sets[4], crack.Hash(sets[1], sets[4]))
-	} else if sets[0] == "test" {
-		if sets[1] == "" {
-			test.TestAll()
-		} else {
-			test.TestMode(sets[1])
-		}
+		// Hash mode (Generate hashes )
+	} else if query.Mode == "hash" {
+		fmt.Printf("\n\"%v\" (%v):			%v\n", query.Password, query.Hash, crack.Hash(query.Password, query.Hash))
+
+	} else if query.Mode == "test" {
+		test.TestAll()
 	}
 }
