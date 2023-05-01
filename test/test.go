@@ -40,7 +40,7 @@ func TestAll() {
 
 	// Hash generation testing
 	fmt.Println("Testing hash generation:")
-	inp = "xcrack hash -p example -t md5"
+	inp = "xcrack hash -p test -t md5"
 	query = format.Args(strings.Split(inp, " "))
 
 	fmt.Println(crack.Hash(query.Password, query.Hash))
