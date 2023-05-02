@@ -115,7 +115,7 @@ func main() {
 	query := format.Args(args)
 	// query = mode, password, input/output files, hash type, min length,
 
-  fmt.Println(query)
+	fmt.Println(query)
 
 	if query.Mode == "help" {
 		fmt.Println(help)

@@ -24,16 +24,17 @@ func TestAll() {
 	// First wordlist
 	inp = "xcrack list -o ./tempWlist1.txt -M 4 -l"
 	query = format.Args(strings.Split(inp, " "))
-  list.WgenSetup(query)
+	list.WgenSetup(query)
 
 	// Second wordlist for merging
 	inp = "xcrack list -o ./tempWlist2.txt -M 3 -l -n"
 	query = format.Args(strings.Split(inp, " "))
-  list.WgenSetup(query)
+	list.WgenSetup(query)
 
 	// Wordlist merging
 	inp = "xcrack list -w ./tempWlist1.txt -w ./tempWlist2.txt -o ./tempWlist.txt"
 	query = format.Args(strings.Split(inp, " "))
+	list.WgenSetup(query)
 
 	rmFile("./tempWlist1.txt")
 	rmFile("./tempWlist2.txt")

@@ -11,13 +11,9 @@ import (
 	"github.com/adzsx/xcrack/pkg/format"
 )
 
-var (
-	now      = time.Now()
-	finished bool
-)
-
 // Cracking with wordlists
-func WlistSet(query format.Query) {
+func WlistSet(query format.Query) (string, time.Duration) {
+	var status int
 
 	fmt.Println("Starting wordlist mode")
 	if Hash("checking...", query.Hash) == "Hash type not found" {
@@ -27,9 +23,10 @@ func WlistSet(query format.Query) {
 
 	// Jobs for different files
 	jobs := make(chan string, len(query.Inputs))
+	result := make(chan string)
 
 	for i := 0; i < len(query.Inputs); i++ {
-		go wordlist(query.Password, query.Hash, jobs, &finished)
+		go wordlist(query.Password, query.Hash, jobs, result, &status)
 	}
 
 	for _, path := range query.Inputs {
@@ -40,19 +37,18 @@ func WlistSet(query format.Query) {
 	}
 
 	for {
-		if !finished {
-			fmt.Println("Password not found")
-			fmt.Printf("\n[%v]\n", time.Since(now))
-			return
-		} else if finished {
-			return
+		if status == 2 {
+
+			return <-result, time.Since(now)
+		} else if status == 1 {
+			return <-result, time.Since(now)
 		}
 	}
 }
 
 // Open wordlist and try every password in there.
-func wordlist(password string, htype string, jobs <-chan string, finished *bool) {
-
+func wordlist(password string, htype string, jobs <-chan string, result chan<- string, status *int) {
+	now := time.Now()
 	// Iterate over files available
 	for path := range jobs {
 		file, err := os.Open(path)
@@ -74,12 +70,14 @@ func wordlist(password string, htype string, jobs <-chan string, finished *bool)
 			if Hash(data, htype) == password {
 				fmt.Printf("Password: %v \n", data)
 				fmt.Printf("\n[%v]\n", time.Since(now))
-				*finished = true
+				*status = 1
+				result <- data
 				return
 
 			}
 		}
 		file.Close()
 	}
-	*finished = false
+	*status = 2
+	result <- ""
 }
