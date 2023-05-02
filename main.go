@@ -115,17 +115,19 @@ func main() {
 	query := format.Args(args)
 	// query = mode, password, input/output files, hash type, min length,
 
-	fmt.Println(query)
-
 	if query.Mode == "help" {
 		fmt.Println(help)
 
 		// Crack, if possible with wordlist
 	} else if query.Mode == "crack" {
 		if len(query.Inputs) == 0 {
-			crack.BruteSetup(query)
+			pw, time := crack.BruteSetup(query)
+
+			fmt.Printf("\nPassword: \"%v\"\n[%v]", pw, time)
 		} else {
-			crack.WlistSet(query)
+			pw, time := crack.WlistSet(query)
+
+			fmt.Printf("\nPassword: \"%v\"\n[%v]", pw, time)
 		}
 
 		// List mode (Generate, clean or merge) wordlists

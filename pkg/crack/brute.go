@@ -16,21 +16,15 @@ import (
 	"github.com/adzsx/xcrack/pkg/format"
 )
 
-var (
-	now = time.Now()
-)
-
 // setting up brute force mode
-func BruteSetup(query format.Query) {
+func BruteSetup(query format.Query) (string, time.Duration) {
+	now := time.Now()
 	var status int
 
 	if query.Password == "" {
 		fmt.Println("Please specify the password")
 		os.Exit(0)
 	}
-
-	now := time.Now()
-	fmt.Println("Starting brute force mode")
 
 	// chars: all chars used in password
 	// password: hashed password
@@ -39,10 +33,11 @@ func BruteSetup(query format.Query) {
 
 	// Jobs (cores) for each length on cpu
 	jobs := make(chan int, query.Max-query.Min)
+	result := make(chan string)
 
 	// Cracking
 	for i := 0; i < (query.Max - query.Min + 1); i++ {
-		go brute(query.Password, query.Hash, query.Chars, jobs, &status)
+		go brute(query.Password, query.Hash, query.Chars, jobs, result, &status)
 	}
 
 	// Gettings results
@@ -55,17 +50,15 @@ func BruteSetup(query format.Query) {
 	for {
 
 		if status == 2 {
-			fmt.Println("Password not found")
-			fmt.Printf("\n[%v]\n", time.Since(now))
-			return
+			return <-result, time.Since(now)
 		} else if status == 1 {
-			return
+			return <-result, time.Since(now)
 		}
 	}
 }
 
 // Brute forcer
-func brute(password string, htype string, chars []string, jobs <-chan int, status *int) {
+func brute(password string, htype string, chars []string, jobs <-chan int, result chan<- string, status *int) {
 	for currentLength := range jobs {
 		counter := make([]int, currentLength)
 		curPass := make([]string, currentLength)
@@ -96,15 +89,16 @@ func brute(password string, htype string, chars []string, jobs <-chan int, statu
 			pw := strings.Join(curPass[:], "")
 			pwh := Hash(pw, htype)
 			if pwh == password {
-				fmt.Printf("Password: %v\n", pw)
-				fmt.Printf("\n[%v]\n", time.Since(now))
+				result <- pw
 				*status = 1
+				return
 			}
 
 		}
 
 	}
 	*status = 2
+	result <- ""
 }
 
 // hashing function, (Here for faster results)

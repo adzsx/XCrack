@@ -13,9 +13,9 @@ import (
 
 // Cracking with wordlists
 func WlistSet(query format.Query) (string, time.Duration) {
+	now := time.Now()
 	var status int
 
-	fmt.Println("Starting wordlist mode")
 	if Hash("checking...", query.Hash) == "Hash type not found" {
 		fmt.Println("The hash type was not found")
 		os.Exit(0)
@@ -36,19 +36,13 @@ func WlistSet(query format.Query) (string, time.Duration) {
 		}
 	}
 
-	for {
-		if status == 2 {
+	close(jobs)
 
-			return <-result, time.Since(now)
-		} else if status == 1 {
-			return <-result, time.Since(now)
-		}
-	}
+	return <-result, time.Since(now)
 }
 
 // Open wordlist and try every password in there.
 func wordlist(password string, htype string, jobs <-chan string, result chan<- string, status *int) {
-	now := time.Now()
 	// Iterate over files available
 	for path := range jobs {
 		file, err := os.Open(path)
@@ -68,8 +62,6 @@ func wordlist(password string, htype string, jobs <-chan string, result chan<- s
 			// Crack
 			data := fileScanner.Text()
 			if Hash(data, htype) == password {
-				fmt.Printf("Password: %v \n", data)
-				fmt.Printf("\n[%v]\n", time.Since(now))
 				*status = 1
 				result <- data
 				return
