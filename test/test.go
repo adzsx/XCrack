@@ -29,6 +29,7 @@ func TestAll() {
 	// Second wordlist for merging
 	inp = "xcrack list -o ./tempWlist2.txt -M 4 -c tes"
 	query = format.Args(strings.Split(inp, " "))
+	fmt.Println(query)
 	list.WgenSetup(query)
 
 	// Wordlist merging

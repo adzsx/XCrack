@@ -18,6 +18,7 @@ import (
 
 // setting up brute force mode
 func BruteSetup(query format.Query) (string, time.Duration) {
+	fmt.Println("starting brute force mode")
 	now := time.Now()
 	var status int
 
@@ -25,11 +26,6 @@ func BruteSetup(query format.Query) (string, time.Duration) {
 		fmt.Println("Please specify the password")
 		os.Exit(0)
 	}
-
-	// chars: all chars used in password
-	// password: hashed password
-	// type_: type of hash
-	// jobs: length to generate password
 
 	// Jobs (cores) for each length on cpu
 	jobs := make(chan int, query.Max-query.Min)
@@ -48,10 +44,7 @@ func BruteSetup(query format.Query) (string, time.Duration) {
 	close(jobs)
 
 	for {
-
-		if status == 2 {
-			return <-result, time.Since(now)
-		} else if status == 1 {
+		if status == 1 {
 			return <-result, time.Since(now)
 		}
 	}
@@ -89,8 +82,8 @@ func brute(password string, htype string, chars []string, jobs <-chan int, resul
 			pw := strings.Join(curPass[:], "")
 			pwh := Hash(pw, htype)
 			if pwh == password {
-				result <- pw
 				*status = 1
+				result <- pw
 				return
 			}
 
@@ -98,7 +91,6 @@ func brute(password string, htype string, chars []string, jobs <-chan int, resul
 
 	}
 	*status = 2
-	result <- ""
 }
 
 // hashing function, (Here for faster results)

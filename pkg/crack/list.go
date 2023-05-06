@@ -33,12 +33,19 @@ func WlistSet(query format.Query) (string, time.Duration) {
 		err, _ := os.Open(path)
 		if err != nil {
 			jobs <- path
+		} else {
+			fmt.Printf("Couldn't find the wordlist %v", path)
+			os.Exit(0)
 		}
 	}
 
 	close(jobs)
 
-	return <-result, time.Since(now)
+	for {
+		if status == 1 {
+			return <-result, time.Since(now)
+		}
+	}
 }
 
 // Open wordlist and try every password in there.
@@ -71,5 +78,4 @@ func wordlist(password string, htype string, jobs <-chan string, result chan<- s
 		file.Close()
 	}
 	*status = 2
-	result <- ""
 }
