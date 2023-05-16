@@ -39,6 +39,8 @@ type Query struct {
 
 	Min int
 	Max int
+
+	// Verbose bool
 }
 
 func Args(cmdIn []string) Query {
@@ -148,7 +150,7 @@ func Args(cmdIn []string) Query {
 		query.Mode = "crack"
 	}
 
-  query.Chars = chars
+	query.Chars = chars
 
 	if query.Mode == "list" {
 		if len(lists) > 0 {

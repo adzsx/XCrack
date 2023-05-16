@@ -15,12 +15,11 @@ import (
 
 func WgenSetup(query format.Query) bool {
 	now := time.Now()
-	fmt.Println("Generating wordlist...")
 
 	if len(query.Chars) == 0 {
 		fmt.Println("Specify the characters used to generate the wordlist")
-    os.Exit(0)
-  }
+		os.Exit(0)
+	}
 
 	// some variables for generating the wordlist
 	file, _ := os.Create(query.Output)

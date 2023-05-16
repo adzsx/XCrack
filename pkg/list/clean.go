@@ -2,7 +2,6 @@ package list
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"os"
 	"time"
@@ -15,7 +14,7 @@ var (
 	items []string
 )
 
-func WlistClean(query format.Query) {
+func WlistClean(query format.Query) time.Duration {
 	now := time.Now()
 
 	for _, file := range query.Inputs {
@@ -34,8 +33,7 @@ func WlistClean(query format.Query) {
 		_, _ = io.WriteString(outfile, item+"\n")
 	}
 
-	fmt.Printf("\n[%v]\n", time.Since(now))
-	os.Exit(0)
+	return time.Since(now)
 }
 
 func readList(fileName string) {

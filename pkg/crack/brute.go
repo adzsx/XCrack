@@ -45,7 +45,7 @@ func BruteSetup(query format.Query) (string, time.Duration) {
 
 	for {
 		if status == 1 {
-			return <-result, time.Since(now)
+			return "test", time.Since(now)
 		}
 	}
 }
