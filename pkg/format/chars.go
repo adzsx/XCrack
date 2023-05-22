@@ -3,66 +3,67 @@ package format
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/adzsx/xcrack/pkg/check"
 )
 
 var (
-	chars  []string
-	output string
+	chars []string
 
 	l_letters = [26]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
+
 	u_letters = [26]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
-	numbers   = [10]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
-	special   = [39]string{" ", "^", "\u00b4", "+", "#", "-", "+", ".", "\"", "<", "°", "!", "§", "$", "%", "&", "/", "(", ")", "=", "?", "`", "*", "'", "_", ":", ";", "′", "{", "[", "]", "}", "\\", ".", "~", "’", "–", "·"}
+
+	numbers = [10]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
+
+	special = [39]string{" ", "^", "\u00b4", "+", "#", "-", "+", ".", "\"", "<", "°", "!", "§", "$", "%", "&", "/", "(", ")", "=", "?", "`", "*", "'", "_", ":", ";", "′", "{", "[", "]", "}", "\\", ".", "~", "’", "–", "·"}
 )
 
-/*
-final = [mode, password, path, chars, hash, min, max]
+// final = [mode, password, path, chars, hash, min, max]
 
-modes:
+type Query struct {
+	// Modes: help, crack, list, hash. test
+	Mode     string
+	Password string
 
-	help:	Shows the help message
-	crack:	For cracking passwords (default)
-	list:	List operations:
-							Wordlist generation
-							Wordlist merging
-							Wordlist cleaning
-	hash:	Generate hashes
+	// input/output for paths
+	Inputs []string
+	Output string
 
-password:
+	Chars []string
 
-	hashed password
+	// Hash modes: md5, sha1, sha256
+	Hash string
 
-path:
+	Min int
+	Max int
 
-	path for wordlist for:
-							Cracking
-							Generation
-							Cleaning
+	// Verbose bool
+}
 
-							Merging (Different paths seperated by space, output is 1.)
+func Args(cmdIn []string) Query {
+	// final = [mode, password, path, chars, hash, min, max]
+	query := Query{}
+	var output string
 
-Chars:
-
-	Chars for cracking/wordlist generation
-*/
-func Args(cmdIn []string) [8]string {
-	// final = [mode, password, path, chars, hash, min, max, optional arguments]
-	var final [8]string
 	var lists []string
 
 	if check.InSclice(cmdIn, "help") || check.InSclice(cmdIn, "-h") || check.InSclice(cmdIn, "--help") {
-		final[0] = "help"
-		return final
-	} else if check.InSclice(cmdIn, "crack") && final[0] == "" {
-		final[0] = "crack"
+		query.Mode = "help"
+		return query
+	} else if cmdIn[1] == "crack" && query.Mode == "" {
+		query.Mode = "crack"
 
-	} else if check.InSclice(cmdIn, "list") && final[0] == "" {
-		final[0] = "list"
-	} else if check.InSclice(cmdIn, "hash") && final[0] == "" {
-		final[0] = "hash"
+	} else if cmdIn[1] == "list" && query.Mode == "" {
+		query.Mode = "list"
+	} else if cmdIn[1] == "hash" && query.Mode == "" {
+		query.Mode = "hash"
+	} else if cmdIn[1] == "test" && query.Mode == "" {
+		query.Mode = "test"
+
+		return query
 	}
 
 	for index, element := range cmdIn {
@@ -75,7 +76,7 @@ func Args(cmdIn []string) [8]string {
 					os.Exit(0)
 				}
 
-				final[1] = cmdIn[index+1]
+				query.Password = cmdIn[index+1]
 
 			case "t":
 				if len(cmdIn) <= index+1 {
@@ -83,7 +84,7 @@ func Args(cmdIn []string) [8]string {
 					os.Exit(0)
 				}
 
-				final[4] = cmdIn[index+1]
+				query.Hash = cmdIn[index+1]
 
 			case "c":
 				if len(cmdIn) <= index+1 {
@@ -120,64 +121,71 @@ func Args(cmdIn []string) [8]string {
 				lists = append(lists, cmdIn[index+1])
 
 			case "m":
-				final[5] = cmdIn[index+1]
+
+				min, err := strconv.Atoi(cmdIn[index+1])
+
+				if err != nil {
+					fmt.Printf("Failed to convert %v to int", cmdIn[index+1])
+				}
+
+				query.Min = min
 
 			case "M":
-				final[6] = cmdIn[index+1]
+				max, err := strconv.Atoi(cmdIn[index+1])
+
+				if err != nil {
+					fmt.Printf("Failed to convert %v to int", cmdIn[index+1])
+				}
+
+				query.Max = max
 			}
 		}
 	}
 
-	if final[4] == "" {
-		final[4] = "md5"
+	if query.Hash == "" {
+		query.Hash = "md5"
 	}
 
-	if final[0] == "" {
-		final[0] = "crack"
+	if query.Mode == "" {
+		query.Mode = "crack"
 	}
 
-	if len(chars) == 0 && final[0] != "list" {
-		for _, char := range l_letters {
-			chars = append(chars, char)
-		}
+	query.Chars = chars
 
-		for _, char := range numbers {
-			chars = append(chars, char)
-		}
-	}
-
-	final[3] = strings.Join(chars, "")
-
-	if final[0] == "list" {
+	if query.Mode == "list" {
 		if len(lists) > 0 {
-			final[2] = output + " " + strings.Join(lists, " ")
+			query.Output = output
+			query.Inputs = lists
 		} else {
-			final[2] = output
+			query.Output = output
 		}
 
 	} else {
-		strings.Join(lists, " ")
+		query.Inputs = lists
 	}
 
-	if final[5] == "" {
-		final[5] = "1"
+	if query.Min == 0 {
+		query.Min = 1
 	}
-	if final[6] == "" {
-		final[6] = "8"
+	if query.Max == 0 {
+		query.Max = 8
 	}
 
-	if len(cmdIn) < 3 && final[0] != "help" {
+	if len(cmdIn) < 3 && query.Mode != "help" {
 		fmt.Println("Enter -h for help\n ")
 		os.Exit(0)
 	}
 
-	if final[0] == "list" && final[2] == "" {
+	if query.Mode == "list" && query.Output == "" {
 		if len(chars) > 0 {
 			fmt.Println("Pleace specify the output file")
 		} else {
 			fmt.Println("Please specify the input and output files")
+
+			os.Exit(1)
 		}
-		os.Exit(1)
+		return query
 	}
-	return final
+
+	return query
 }

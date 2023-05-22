@@ -7,66 +7,75 @@ import (
 	"fmt"
 	"os"
 	"time"
+
+	"github.com/adzsx/xcrack/pkg/format"
 )
 
-var (
-	now = time.Now()
-)
+// Cracking with wordlists
+func WlistSet(query format.Query) (string, time.Duration) {
+	now := time.Now()
+	var status int
 
-func WlistSet(password string, htype string, paths []string) {
-	fmt.Println("Starting wordlist mode")
-
-	if Hash("checking...", htype) == "Hash type not found" {
+	if Hash("checking...", query.Hash) == "Hash type not found" {
 		fmt.Println("The hash type was not found")
 		os.Exit(0)
 	}
 
-	jobs := make(chan string, len(paths))
-	result := make(chan bool, len(paths))
+	// Jobs for different files
+	jobs := make(chan string, len(query.Inputs))
+	result := make(chan string)
 
-	for i := 0; i < len(paths); i++ {
-		go wordlist(password, htype, jobs, result)
+	for i := 0; i < len(query.Inputs); i++ {
+		go wordlist(query.Password, query.Hash, jobs, result, &status)
 	}
 
-	for _, path := range paths {
+	for _, path := range query.Inputs {
 		err, _ := os.Open(path)
-		if err != nil{
+		if err != nil {
 			jobs <- path
+		} else {
+			fmt.Printf("Couldn't find the wordlist %v", path)
+			os.Exit(0)
 		}
 	}
 
-	var finished []bool
-	for i := range result {
-		finished = append(finished, i)
-		if len(finished) >= len(paths) {
-			fmt.Println("Password not found")
-			fmt.Printf("\n[%v]\n", time.Since(now))
-			os.Exit(0)
+	close(jobs)
+
+	for {
+		if status == 1 {
+			return <-result, time.Since(now)
 		}
 	}
 }
 
-func wordlist(password string, htype string, jobs <-chan string, response chan<- bool) {
+// Open wordlist and try every password in there.
+func wordlist(password string, htype string, jobs <-chan string, result chan<- string, status *int) {
+	// Iterate over files available
 	for path := range jobs {
 		file, err := os.Open(path)
 		if err != nil {
 			fmt.Printf("Path \"%v\" found. Plase enter a valid path!\n", path)
-			os.Exit(0)
+			return
 		}
 
+		// File Scanner
 		fileScanner := bufio.NewScanner(file)
 
 		fileScanner.Split(bufio.ScanLines)
 
+		// For each line
 		for fileScanner.Scan() {
+
+			// Crack
 			data := fileScanner.Text()
 			if Hash(data, htype) == password {
-				fmt.Printf("Password: %v \n", data)
-				fmt.Printf("\n[%v]\n", time.Since(now))
-				os.Exit(0)
+				*status = 1
+				result <- data
+				return
+
 			}
 		}
-		response <- false
 		file.Close()
 	}
+	*status = 2
 }
