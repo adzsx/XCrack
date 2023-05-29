@@ -13,7 +13,7 @@ import (
 	"github.com/adzsx/xcrack/pkg/format"
 )
 
-func WgenSetup(query format.Query) bool {
+func WgenSetup(query format.Query) (bool, time.Duration) {
 	now := time.Now()
 
 	if len(query.Chars) == 0 {
@@ -44,12 +44,11 @@ func WgenSetup(query format.Query) bool {
 	for i := range response {
 		finished = append(finished, i)
 		if len(finished) > query.Max-query.Min {
-			fmt.Println("Done")
-			fmt.Printf("\n[%v]\n", time.Since(now))
-			return true
+
+			return true, time.Since(now)
 		}
 	}
-	return false
+	return false, time.Since(now)
 }
 
 // Wordlist generation mode

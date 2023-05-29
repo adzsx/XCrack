@@ -1,7 +1,7 @@
 package test
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -16,39 +16,59 @@ var (
 )
 
 func TestAll() {
-	fmt.Println("Running tests...")
+	log.Println("Starting tests...\n\n ")
 
-	// Testing Wordlist generation
-	fmt.Println("Testing wordlist generation mode")
-
-	// First wordlist
-	query = format.Query{}
-	inp = "xcrack list -o ./tempWlist1.txt -M 3 -m 2 -l -n"
+	// Wordlist generation
+	log.Println("Testing list mode")
+	inp = "xcrack list -o ./tempWlist1.txt -M 4 -m 2 -l -n"
 	query = format.Args(strings.Split(inp, " "))
 	list.WgenSetup(query)
 
-	// Second wordlist for merging
-	query = format.Query{}
-
-	inp := "xcrack list -o ./tempWlist2.txt -m 3 -M 4 -c tes -l"
-	query := format.Args(strings.Split(inp, " "))
-	fmt.Println(query)
+	inp = "xcrack list -o ./tempWlist2.txt -M 3 -n -L"
+	query = format.Args(strings.Split(inp, " "))
 	list.WgenSetup(query)
 
-	// Wordlist merging
+	//Wordlist merging and cleaning
 	inp = "xcrack list -w ./tempWlist1.txt -w ./tempWlist2.txt -o ./tempWlist.txt"
 	query = format.Args(strings.Split(inp, " "))
-	list.WgenSetup(query)
+	list.WlistClean(query)
 
-	rmFile("./tempWlist1.txt")
-	rmFile("./tempWlist2.txt")
+	log.Println("Passed list mode test\n ")
 
-	// Hash generation testing
-	fmt.Println("Testing hash generation:")
-	inp = "xcrack hash -p test -t md5"
+	// Hash cracking
+	log.Println("Testing cracking mode")
+	inp = "xcrack crack -p a94a8fe5ccb19ba61c4c0873d391e987982fbbd3 -t sha1 -l -M 4"
 	query = format.Args(strings.Split(inp, " "))
+	password, _ := crack.BruteSetup(query)
+	if password != "test" {
+		log.Fatalf("Expected \"test\", got \"%v\". Brute force cracking", password)
+	}
 
-	fmt.Println(crack.Hash(query.Password, query.Hash))
+	inp = "xcrack crack -p a94a8fe5ccb19ba61c4c0873d391e987982fbbd3 -t sha1 -w tempWlist.txt"
+	query = format.Args(strings.Split(inp, " "))
+	password, _ = crack.WlistSet(query)
+	if password != "test" {
+		log.Fatalf("Expected \"test\", got \"%v\". Wordlist cracking", password)
+	}
+
+	log.Println("Passed crack mode test\n ")
+
+	// Hash generation
+	log.Println("Testing hashing mode")
+	inp = "xcrack hash -p test -t sha1"
+	query = format.Args(strings.Split(inp, " "))
+	hash := crack.Hash(query.Password, query.Hash)
+	if hash != "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3" {
+		log.Fatalf("Expected \"a94a8fe5ccb19ba61c4c0873d391e987982fbbd3\", got \"%v\". Hash generation", hash)
+	}
+
+	log.Println("Passed hash generation test\n\n ")
+
+	log.Println("Tests completed successfully")
+
+	rmFile("tempWlist1.txt")
+	rmFile("tempWlist2.txt")
+	rmFile("tempWlist.txt")
 }
 
 func rmFile(name string) {
