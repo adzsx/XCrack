@@ -1,59 +1,20 @@
+<p align="center">
+  <img src=https://github.com/adzsx/XCrack/blob/main/img/xcrack-no-bg.png>
+</p>
+
 # XCrack
-## Description
-XCrack is a selection of tools for offline password attacks suck as hash cracking, wordlist generation, wordlist merging, and many more.
+## A tool for offline password attacks written in go
+Hash cracking is one of the most essential things to do in cyber security. For that purpose I  created this password cracking tool with speeds comparable to other well known CPU based cracking tools such as John the ripper This tool uses a wordlist or brute force to crack a password hash. It has options for customized wordlist generation and wordlist merging, meaning you can combine 2 wordlists and create a new one while filtering out duplicateds. The app calculates the size of the wordlist 
+
+## Contributing
+### Bug fixes:
+For quick bug fixes open an issue or pull request with the description of the error and/or a fix of the error.
+
+### Supporting the project
+If you want to contribute to the project in the long run, you can write me an email to adzsx@proton.me or submit one through my [Website](https://adzsx.github.io/#contact)
 
 
-## Documentation
->crack:  Crack hashes with brute force or a wordlist
->list:   Generation, cleaning and merging of wordlists 
->hash:   Generate a hash from an input
+## [Documentation](https://adzsx.github.io/projects/xcrack/)
 
 
-### Crack mode
-Syntax: ``xcrack (crack) [Flags] ``
-
-Flags:  
->-p HASH:   Specify the hashed password required  
->-t TYPE:   specify the hash-TYPE default: md5  
->-n: 	    numbers default  
->-l: 		lowercase letters default  
->-L: 	    uppercase letters  
->-s:        special Characters  
->-c	CHARS:  Only uses CHARS for the password  
-  
->-m	LENGTH: min LENGTH of password default: 1
->-M LENGTH: max LENGTH of password default: 8  
-
->-w	PATH:   uses a wordlist in PATH  
-
-
-### List mode
-Syntax: ``xcrack list [Flags] ``
-
-Flags:  
->-n: 	    numbers default  
->-l: 	    lowercase letters default  
->-L: 	    uppercase letters  
->-s: 	    special Characters  
->-c CHARS:  Only uses CHARS for the password  
-  
->-m LENGTH  min LENGTH of password default: 1  
->-M LENGTH  max LENGTH of password default: 8  
-  
->-w PATH    Input file for cleaning and merging
->-o PATH:   Output file for wordlist generation, cleaning and merging
-
-### Hash mode
-Syntax: xcrack hash [Flags]  
-
-Flags:  
->-t	TYPE:   Specifies the type of the hash default: md5  
->-p STRING: Argument will be hashed with TYPE
-
-##  Contribution
-If you want to contribute to the project, feel free to fork this repo with code imrovements. 
-
-If you want to contribute on the long run, contact me at adzsx@proton.me or my [website](https://adzsx.github.io/#contact)
-
-# 
-#### [GPL License](https://choosealicense.com/licenses/gpl-3.0/)
+### [GPL License](https://choosealicense.com/licenses/gpl-3.0/)
