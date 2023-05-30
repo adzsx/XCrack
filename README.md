@@ -1,8 +1,7 @@
 <p align="center">
-  <img src=https://github.com/adzsx/XCrack/blob/main/img/xcrack-no-bg.png>
+  <img src=https://github.com/adzsx/XCrack/blob/main/img/xcrack-no-bg.png height=300px>
 </p>
 
-# XCrack
 ## A tool for offline password attacks written in go
 Hash cracking is one of the most essential things to do in cyber security. For that purpose I  created this password cracking tool with speeds comparable to other well known CPU based cracking tools such as John the ripper This tool uses a wordlist or brute force to crack a password hash. It has options for customized wordlist generation and wordlist merging, meaning you can combine 2 wordlists and create a new one while filtering out duplicateds. The app calculates the size of the wordlist 
 
