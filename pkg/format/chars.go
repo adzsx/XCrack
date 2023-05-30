@@ -10,8 +10,6 @@ import (
 )
 
 var (
-	chars []string
-
 	l_letters = [26]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
 
 	u_letters = [26]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
@@ -45,9 +43,11 @@ type Query struct {
 
 func Args(cmdIn []string) Query {
 	// final = [mode, password, path, chars, hash, min, max]
-	query := Query{}
-	var output string
 
+	query := Query{}
+
+	var output string
+	var chars []string
 	var lists []string
 
 	if check.InSclice(cmdIn, "help") || check.InSclice(cmdIn, "-h") || check.InSclice(cmdIn, "--help") {

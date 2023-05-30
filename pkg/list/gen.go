@@ -5,6 +5,7 @@ package list
 import (
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"strings"
 	"time"
@@ -13,7 +14,29 @@ import (
 	"github.com/adzsx/xcrack/pkg/format"
 )
 
-func WgenSetup(query format.Query) bool {
+var (
+	sizes   = []string{"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB"}
+	numbers = []string{"", "Thousand", "Million", "Billion", "Trillion", "Quadrillion", "Quintillion", "Sextillion", "Septillion", "Octillion", "Nonillion", "Decillion"}
+
+	pws    float64
+	tchars float64
+
+	sizeUnit string
+	numUnit  string
+)
+
+func WgenSetup(query format.Query, showSize bool) (bool, time.Duration) {
+
+	if showSize {
+		var input string
+		stSize, pwsize := size(query)
+		fmt.Printf("The wordlist will be %v big and contain %v Passwords.\nDo you want to continue? [y/n] ", stSize, pwsize)
+		fmt.Scanln(&input)
+		if input != "y" {
+			os.Exit(0)
+		}
+	}
+
 	now := time.Now()
 
 	if len(query.Chars) == 0 {
@@ -44,12 +67,11 @@ func WgenSetup(query format.Query) bool {
 	for i := range response {
 		finished = append(finished, i)
 		if len(finished) > query.Max-query.Min {
-			fmt.Println("Done")
-			fmt.Printf("\n[%v]\n", time.Since(now))
-			return true
+
+			return true, time.Since(now)
 		}
 	}
-	return false
+	return false, time.Since(now)
 }
 
 // Wordlist generation mode
@@ -89,4 +111,40 @@ func gen(chars []string, jobs <-chan int, response chan<- bool, file *os.File) {
 
 	}
 	response <- true
+}
+
+func size(query format.Query) (string, string) {
+	// return: size, in unit, number of passwords
+
+	chars := len(query.Chars)
+	var lengths []int
+
+	for i := query.Min; i <= query.Max; i++ {
+		lengths = append(lengths, i)
+	}
+
+	for _, length := range lengths {
+		pws += math.Pow(float64(chars), float64(length))
+		tchars += float64(math.Pow(float64(chars), float64(length)) * float64(length))
+	}
+
+	tchars += pws
+
+	for _, element := range sizes {
+		sizeUnit = element
+		if tchars < 1024 {
+			break
+		}
+		tchars = tchars / 1024
+	}
+
+	for _, element := range numbers {
+		numUnit = element
+		if pws < 1000 {
+			break
+		}
+		pws = pws / 1000
+	}
+
+	return fmt.Sprintf("%.2f %v", tchars, sizeUnit), fmt.Sprintf("%.2f %v", pws, numUnit)
 }

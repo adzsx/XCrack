@@ -18,7 +18,6 @@ import (
 
 // setting up brute force mode
 func BruteSetup(query format.Query) (string, time.Duration) {
-	fmt.Println("starting brute force mode")
 	now := time.Now()
 	var status int
 
@@ -45,7 +44,7 @@ func BruteSetup(query format.Query) (string, time.Duration) {
 
 	for {
 		if status == 1 {
-			return "test", time.Since(now)
+			return <-result, time.Since(now)
 		}
 	}
 }
