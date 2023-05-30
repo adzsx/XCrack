@@ -76,7 +76,7 @@ func main() {
 		if len(query.Chars) == 0 {
 			list.WlistClean(query)
 		} else {
-			list.WgenSetup(query)
+			list.WgenSetup(query, true)
 		}
 
 		// Hash mode (Generate hashes )

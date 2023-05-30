@@ -22,11 +22,11 @@ func TestAll() {
 	log.Println("Testing list mode")
 	inp = "xcrack list -o ./tempWlist1.txt -M 4 -m 2 -l -n"
 	query = format.Args(strings.Split(inp, " "))
-	list.WgenSetup(query)
+	list.WgenSetup(query, false)
 
 	inp = "xcrack list -o ./tempWlist2.txt -M 3 -n -L"
 	query = format.Args(strings.Split(inp, " "))
-	list.WgenSetup(query)
+	list.WgenSetup(query, false)
 
 	//Wordlist merging and cleaning
 	inp = "xcrack list -w ./tempWlist1.txt -w ./tempWlist2.txt -o ./tempWlist.txt"
@@ -44,7 +44,7 @@ func TestAll() {
 		log.Fatalf("Expected \"test\", got \"%v\". Brute force cracking", password)
 	}
 
-	inp = "xcrack crack -p a94a8fe5ccb19ba61c4c0873d391e987982fbbd3 -t sha1 -w tempWlist.txt"
+	inp = "xcrack crack -p a94a8fe5ccb19ba61c4c0873d391e987982fbbd3 -t sha1 -w tempWlist.txt -w tempWlist1.txt"
 	query = format.Args(strings.Split(inp, " "))
 	password, _ = crack.WlistSet(query)
 	if password != "test" {
