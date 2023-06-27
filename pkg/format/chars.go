@@ -70,7 +70,7 @@ func Args(cmdIn []string) Query {
 		if element[0:1] == "-" {
 			switch element[1:2] {
 
-			case "p":
+			case "p", "-password":
 				if len(cmdIn) <= index+1 {
 					fmt.Println("Please specify the password")
 					os.Exit(0)
@@ -78,7 +78,7 @@ func Args(cmdIn []string) Query {
 
 				query.Password = cmdIn[index+1]
 
-			case "t":
+			case "t", "-type":
 				if len(cmdIn) <= index+1 {
 					fmt.Println("Please specify the type")
 					os.Exit(0)
@@ -86,7 +86,7 @@ func Args(cmdIn []string) Query {
 
 				query.Hash = cmdIn[index+1]
 
-			case "c":
+			case "c", "-characters":
 				if len(cmdIn) <= index+1 {
 					fmt.Println("Please specify the characters")
 					os.Exit(0)
@@ -114,13 +114,13 @@ func Args(cmdIn []string) Query {
 					chars = append(chars, char)
 				}
 
-			case "o":
+			case "o", "-output":
 				output = cmdIn[index+1]
 
-			case "w":
+			case "w", "-wordlist":
 				lists = append(lists, cmdIn[index+1])
 
-			case "m":
+			case "m", "-min":
 
 				min, err := strconv.Atoi(cmdIn[index+1])
 
@@ -130,7 +130,7 @@ func Args(cmdIn []string) Query {
 
 				query.Min = min
 
-			case "M":
+			case "M", "-max":
 				max, err := strconv.Atoi(cmdIn[index+1])
 
 				if err != nil {

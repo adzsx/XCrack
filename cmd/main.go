@@ -20,17 +20,17 @@ Modes:
 	hash:	Generates a hash from a given string
 
 Flags:
-	-p HASH:   	hashed password/text to be hashed 					
-	-t TYPE:	hash type				default: md5
-	-n:		numbers					default
- 	-l:		lowercase letters			default
-	-L:		uppercase letters
-	-s:		special Characters
-	-c CHARS:	use CHARS for the password
-	-m LENGTH:	min LENGTH of password			default: 1
-	-M LENGTH:	max LENGTH of password 			default: 8
-	-w PATH:	input wordlist
-	-o PATH		output wordlist
+	-p, --password 		[HASH]:   	hashed password/text to be hashed 					
+	-t, --type 		[TYPE]:		hash type				default: md5
+	-n:					numbers					default
+ 	-l:					lowercase letters			default
+	-L:					uppercase letters
+	-s:					special Characters
+	-c, --characters	[CHARS]:	use CHARS for the password
+	-m, --min 		[LENGTH]:	min LENGTH of password			default: 1
+	-M, --max 		[LENGTH]:	max LENGTH of password 			default: 8
+	-w, --wordlist 		[PATH]:		input wordlist
+	-o, -output 		[PATH]		output wordlist
 `
 
 	start string = `
@@ -41,6 +41,8 @@ Flags:
 
 ############################################
 `
+
+	version = "gwire v1.1"
 )
 
 func main() {
