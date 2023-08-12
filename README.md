@@ -1,6 +1,4 @@
-<p align="center">
-  <img src=https://github.com/adzsx/XCrack/blob/main/img/xcrack-banner.png>
-</p>
+# XCrack
 A cli tool for offline password attacks
 
 ## Features
