@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=https://github.com/adzsx/XCrack/blob/main/img/xcrack-no-bg.png height=300px>
+  <img src=https://github.com/adzsx/XCrack/blob/main/img/xcrack-banner.png height=300px>
 </p>
 A cli tool for offline password attacks
 
