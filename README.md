@@ -6,6 +6,7 @@ A cli tool for offline password attacks
 ## Features
 - Brute force hash cracking
 - Wordlist hash cracking
+- Multiple Core usage for Brute force and Wordlists
 - Wordlist generation
 - Wordlist merging
 - Wordlist clearning

@@ -22,6 +22,7 @@ Modes:
 Flags:
 	-p, --password 		[HASH]:   	hashed password/text to be hashed 					
 	-t, --type 		[TYPE]:		hash type				default: md5
+	-f, --file		[FILE]:		Crack hashes form file
 	-n:					numbers					default
  	-l:					lowercase letters			default
 	-L:					uppercase letters
@@ -33,20 +34,10 @@ Flags:
 	-o, -output 		[PATH]		output wordlist
 `
 
-	start string = `
-############################################
-
-▀▄▀ █▀▀ █▀█ █▀█ █▀▀ █▄▀
-█ █ █▄▄ █▀▄ █▀█ █▄▄ █ █
-
-############################################
-`
-
-	version = "gwire v1.1"
+	version = "xcrack v1.2"
 )
 
 func main() {
-	fmt.Println(start)
 	args := os.Args
 	args[0] = "xcrack"
 
@@ -62,12 +53,17 @@ func main() {
 		fmt.Println(help)
 
 		// Crack, if possible with wordlist
+	} else if query.Mode == "version" {
+		fmt.Println(version)
+
 	} else if query.Mode == "crack" {
 		if len(query.Inputs) == 0 {
+			fmt.Println("Starting Brute force mode...")
 			pw, time := crack.BruteSetup(query)
 
 			fmt.Printf("\nPassword: \"%v\"\n[%v]", pw, time)
 		} else {
+			fmt.Println("Starting wordlist mode")
 			pw, time := crack.WlistSet(query)
 
 			fmt.Printf("\nPassword: \"%v\"\n[%v]", pw, time)

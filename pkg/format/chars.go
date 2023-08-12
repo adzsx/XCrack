@@ -25,6 +25,7 @@ type Query struct {
 	// Modes: help, crack, list, hash. test
 	Mode     string
 	Password string
+	File     string
 
 	// input/output for paths
 	Inputs []string
@@ -58,11 +59,16 @@ func Args(cmdIn []string) Query {
 
 	} else if cmdIn[1] == "list" && query.Mode == "" {
 		query.Mode = "list"
+
 	} else if cmdIn[1] == "hash" && query.Mode == "" {
 		query.Mode = "hash"
+
+	} else if cmdIn[1] == "--version" && query.Mode == "" {
+		query.Mode = "version"
+		return query
+
 	} else if cmdIn[1] == "test" && query.Mode == "" {
 		query.Mode = "test"
-
 		return query
 	}
 
@@ -93,6 +99,12 @@ func Args(cmdIn []string) Query {
 				}
 
 				chars = append(chars, strings.Join(cmdIn[index+1:index+2], ""))
+
+			case "f", "-file":
+				if len(cmdIn) <= index+1 {
+					fmt.Println("Please specify the file")
+					os.Exit(0)
+				}
 
 			case "l":
 				for _, char := range l_letters {
