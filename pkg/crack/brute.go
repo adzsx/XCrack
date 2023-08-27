@@ -6,37 +6,37 @@ import (
 	"crypto/md5"
 	"crypto/sha1"
 	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/hex"
 	"fmt"
 	"os"
 	"strings"
 	"time"
 
-	"github.com/adzsx/xcrack/pkg/check"
-	"github.com/adzsx/xcrack/pkg/format"
+	"github.com/adzsx/xcrack/pkg/utils"
 )
 
 // setting up brute force mode
-func BruteSetup(query format.Query) (string, time.Duration) {
+func BruteSetup(input utils.Input) (string, time.Duration) {
 	now := time.Now()
 	var status int
 
-	if query.Password == "" {
+	if input.Password == "" {
 		fmt.Println("Please specify the password")
 		os.Exit(0)
 	}
 
 	// Jobs (cores) for each length on cpu
-	jobs := make(chan int, query.Max-query.Min)
+	jobs := make(chan int, input.Max-input.Min)
 	result := make(chan string)
 
 	// Cracking
-	for i := 0; i < (query.Max - query.Min + 1); i++ {
-		go brute(query.Password, query.Hash, query.Chars, jobs, result, &status)
+	for i := 0; i < (input.Max - input.Min + 1); i++ {
+		go brute(input.Password, input.Hash, input.Chars, jobs, result, &status)
 	}
 
 	// Gettings results
-	for i := query.Min; i <= query.Max; i++ {
+	for i := input.Min; i <= input.Max; i++ {
 		jobs <- i
 	}
 
@@ -56,7 +56,7 @@ func brute(password string, htype string, chars []string, jobs <-chan int, resul
 		curPass := make([]string, currentLength)
 		counter[0] = -1
 		total := len(counter) * (len(chars) - 1)
-		for check.Sum(counter) < total {
+		for utils.Sum(counter) < total {
 
 			counter[0] += 1
 
@@ -103,6 +103,11 @@ func Hash(text string, htype string) string {
 		return hex.EncodeToString(hash[:])
 	case "sha256":
 		h := sha256.New()
+		h.Write([]byte(text))
+		hash := h.Sum(nil)
+		return fmt.Sprintf("%x", hash)
+	case "sha512":
+		h := sha512.New()
 		h.Write([]byte(text))
 		hash := h.Sum(nil)
 		return fmt.Sprintf("%x", hash)

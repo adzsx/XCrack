@@ -8,28 +8,28 @@ import (
 	"os"
 	"time"
 
-	"github.com/adzsx/xcrack/pkg/format"
+	"github.com/adzsx/xcrack/pkg/utils"
 )
 
 // Cracking with wordlists
-func WlistSet(query format.Query) (string, time.Duration) {
+func WlistSet(input utils.Input) (string, time.Duration) {
 	now := time.Now()
 	var status int
 
-	if Hash("checking...", query.Hash) == "Hash type not found" {
+	if Hash("checking...", input.Hash) == "Hash type not found" {
 		fmt.Println("The hash type was not found")
 		os.Exit(0)
 	}
 
 	// Jobs for different files
-	jobs := make(chan string, len(query.Inputs))
+	jobs := make(chan string, len(input.Inputs))
 	result := make(chan string)
 
-	for i := 0; i < len(query.Inputs); i++ {
-		go wordlist(query.Password, query.Hash, jobs, result, &status)
+	for i := 0; i < len(input.Inputs); i++ {
+		go wordlist(input.Password, input.Hash, jobs, result, &status)
 	}
 
-	for _, path := range query.Inputs {
+	for _, path := range input.Inputs {
 		err, _ := os.Open(path)
 		if err != nil {
 			jobs <- path

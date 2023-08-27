@@ -10,8 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/adzsx/xcrack/pkg/check"
-	"github.com/adzsx/xcrack/pkg/format"
+	"github.com/adzsx/xcrack/pkg/utils"
 )
 
 var (
@@ -25,39 +24,39 @@ var (
 	numUnit  string
 )
 
-func WgenSetup(query format.Query, showSize bool) (bool, time.Duration) {
+func WgenSetup(input utils.Input, showSize bool) (bool, time.Duration) {
 
 	if showSize {
-		var input string
-		stSize, pwsize := size(query)
+		var inp string
+		stSize, pwsize := size(input)
 		fmt.Printf("The wordlist will be %v big and contain %v Passwords.\nDo you want to continue? [y/n] ", stSize, pwsize)
-		fmt.Scanln(&input)
-		if input != "y" {
+		fmt.Scanln(&inp)
+		if inp != "y" {
 			os.Exit(0)
 		}
 	}
 
 	now := time.Now()
 
-	if len(query.Chars) == 0 {
+	if len(input.Chars) == 0 {
 		fmt.Println("Specify the characters used to generate the wordlist")
 		os.Exit(0)
 	}
 
 	// some variables for generating the wordlist
-	file, _ := os.Create(query.Output)
+	file, _ := os.Create(input.Output)
 
 	// Create list with characters included in the password
 
 	// length of passwords to be generated
-	jobs := make(chan int, query.Max-query.Min)
-	response := make(chan bool, query.Max-query.Min)
+	jobs := make(chan int, input.Max-input.Min)
+	response := make(chan bool, input.Max-input.Min)
 
-	for i := 0; i < query.Max-query.Min+1; i++ {
-		go gen(query.Chars, jobs, response, file)
+	for i := 0; i < input.Max-input.Min+1; i++ {
+		go gen(input.Chars, jobs, response, file)
 	}
 
-	for i := query.Min; i <= query.Max; i++ {
+	for i := input.Min; i <= input.Max; i++ {
 		jobs <- i
 	}
 
@@ -66,7 +65,7 @@ func WgenSetup(query format.Query, showSize bool) (bool, time.Duration) {
 	var finished []bool
 	for i := range response {
 		finished = append(finished, i)
-		if len(finished) > query.Max-query.Min {
+		if len(finished) > input.Max-input.Min {
 
 			return true, time.Since(now)
 		}
@@ -83,7 +82,7 @@ func gen(chars []string, jobs <-chan int, response chan<- bool, file *os.File) {
 		password := make([]string, currentLength)
 		counter[0] = -1
 		total := len(counter) * (len(chars) - 1)
-		for check.Sum(counter) < total {
+		for utils.Sum(counter) < total {
 
 			counter[0] += 1
 
@@ -113,13 +112,13 @@ func gen(chars []string, jobs <-chan int, response chan<- bool, file *os.File) {
 	response <- true
 }
 
-func size(query format.Query) (string, string) {
+func size(input utils.Input) (string, string) {
 	// return: size, in unit, number of passwords
 
-	chars := len(query.Chars)
+	chars := len(input.Chars)
 	var lengths []int
 
-	for i := query.Min; i <= query.Max; i++ {
+	for i := input.Min; i <= input.Max; i++ {
 		lengths = append(lengths, i)
 	}
 

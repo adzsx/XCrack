@@ -6,15 +6,14 @@ import (
 	"os"
 	"time"
 
-	"github.com/adzsx/xcrack/pkg/check"
-	"github.com/adzsx/xcrack/pkg/format"
+	"github.com/adzsx/xcrack/pkg/utils"
 )
 
 var (
 	items []string
 )
 
-func WlistClean(query format.Query) time.Duration {
+func WlistClean(query utils.Input) time.Duration {
 	now := time.Now()
 
 	for _, file := range query.Inputs {
@@ -27,7 +26,7 @@ func WlistClean(query format.Query) time.Duration {
 
 	outfile, err := os.Create(query.Output)
 
-	check.Err(err)
+	utils.Err(err)
 
 	for _, item := range items {
 		_, _ = io.WriteString(outfile, item+"\n")
@@ -39,11 +38,11 @@ func WlistClean(query format.Query) time.Duration {
 func readList(fileName string) {
 	_, err := os.ReadFile(fileName)
 
-	check.Err(err)
+	utils.Err(err)
 
 	file, err := os.Open(fileName)
 
-	check.Err(err)
+	utils.Err(err)
 
 	fileScanner := bufio.NewScanner(file)
 	fileScanner.Split(bufio.ScanLines)
