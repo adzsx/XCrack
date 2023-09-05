@@ -69,7 +69,6 @@ func main() {
 
 			fmt.Printf("\nPassword: \"%v\"\n[%v]", pw, time)
 		} else {
-			fmt.Println("Starting wordlist mode")
 			pw, time := crack.WlistSet(input)
 
 			fmt.Printf("\nPassword: \"%v\"\n[%v]", pw, time)

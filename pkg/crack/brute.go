@@ -8,6 +8,7 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -22,7 +23,7 @@ func BruteSetup(input utils.Input) (string, time.Duration) {
 	var status int
 
 	if input.Password == "" {
-		fmt.Println("Please specify the password")
+		utils.Err(errors.New("password not specified"))
 		os.Exit(0)
 	}
 

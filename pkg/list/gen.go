@@ -3,6 +3,7 @@
 package list
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"math"
@@ -39,7 +40,7 @@ func WgenSetup(input utils.Input, showSize bool) (bool, time.Duration) {
 	now := time.Now()
 
 	if len(input.Chars) == 0 {
-		fmt.Println("Specify the characters used to generate the wordlist")
+		utils.Err(errors.New("no characters specified"))
 		os.Exit(0)
 	}
 

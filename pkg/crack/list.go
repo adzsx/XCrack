@@ -4,6 +4,7 @@ package crack
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"time"
@@ -13,11 +14,12 @@ import (
 
 // Cracking with wordlists
 func WlistSet(input utils.Input) (string, time.Duration) {
+	fmt.Println("Starting wordlist mode")
 	now := time.Now()
 	var status int
 
 	if Hash("checking...", input.Hash) == "Hash type not found" {
-		fmt.Println("The hash type was not found")
+		utils.Err(errors.New("hash type \"" + input.Hash + "\" not found"))
 		os.Exit(0)
 	}
 
@@ -34,7 +36,7 @@ func WlistSet(input utils.Input) (string, time.Duration) {
 		if err != nil {
 			jobs <- path
 		} else {
-			fmt.Printf("Couldn't find the wordlist %v", path)
+			utils.Err(errors.New(path + " not found"))
 			os.Exit(0)
 		}
 	}
@@ -54,7 +56,7 @@ func wordlist(password string, htype string, jobs <-chan string, result chan<- s
 	for path := range jobs {
 		file, err := os.Open(path)
 		if err != nil {
-			fmt.Printf("Path \"%v\" found. Plase enter a valid path!\n", path)
+			utils.Err(errors.New(path + " not found"))
 			return
 		}
 

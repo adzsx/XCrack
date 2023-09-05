@@ -1,12 +1,14 @@
 package test
 
 import (
+	"errors"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/adzsx/xcrack/pkg/crack"
 	"github.com/adzsx/xcrack/pkg/list"
+	"github.com/adzsx/xcrack/pkg/utils"
 	format "github.com/adzsx/xcrack/pkg/utils"
 )
 
@@ -41,14 +43,14 @@ func TestAll() {
 	input = format.Args(strings.Split(inp, " "))
 	password, _ := crack.BruteSetup(input)
 	if password != "test" {
-		log.Fatalf("Expected \"test\", got \"%v\". Brute force cracking", password)
+		utils.Err(errors.New("expected \"test\", got \"" + password + "\". Brute force cracking"))
 	}
 
 	inp = "xcrack crack -p a94a8fe5ccb19ba61c4c0873d391e987982fbbd3 -t sha1 -w tempWlist.txt -w tempWlist1.txt"
 	input = format.Args(strings.Split(inp, " "))
 	password, _ = crack.WlistSet(input)
 	if password != "test" {
-		log.Fatalf("Expected \"test\", got \"%v\". Wordlist cracking", password)
+		utils.Err(errors.New("expected \"test\", got \"" + password + "\". wordlist cracking"))
 	}
 
 	log.Println("Passed crack mode test\n ")
@@ -59,7 +61,7 @@ func TestAll() {
 	input = format.Args(strings.Split(inp, " "))
 	hash := crack.Hash(input.Password, input.Hash)
 	if hash != "ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff" {
-		log.Fatalf("Expected \"ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff\", got \"%v\". Hash generation", hash)
+		utils.Err(errors.New("expected \"ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff\", got \"" + hash + "\". Hash generation"))
 	}
 
 	log.Println("Passed hash generation test\n\n ")
