@@ -39,7 +39,7 @@ hash-mode:
 	-d, --detect:				detect the hash type
 `
 
-	version = "xcrack v1.3"
+	version = "xcrack v1.2"
 )
 
 func main() {
