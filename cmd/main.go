@@ -22,7 +22,7 @@ Modes:
 
 Flags:
 	-p, --password 		[HASH]:   	hashed password/text to be hashed 					
-	-t, --type 		([TYPE]):	hash type, hash detection if left empty		default: md5
+	-t, --type 		([TYPE]):	hash type, hash detection if left empty
 	-f, --file		[FILE]:		Crack hashes form file
 	-n, --numbers:				numbers						default
  	-l, --lletters:				lowercase letters				default
@@ -32,12 +32,11 @@ Flags:
 	-m, --min 		[LENGTH]:	min LENGTH of password				default: 3
 	-M, --max 		[LENGTH]:	max LENGTH of password 				default: 8
 	-w, --wordlist 		[PATH]:		input wordlist
-	-o, -output 		[PATH]:		output wordlist
+	-o, --output 		[PATH]:		output wordlist
 
-Mode Flags:
-	hash:
-		-r, --raw: 		Prints just the hash(es)
-		-d, --detect:	(Tries) to detect the hash type
+hash-mode:
+	-r, --raw: 				Print just the hash(es)
+	-d, --detect:				detect the hash type
 `
 
 	version = "xcrack v1.3"

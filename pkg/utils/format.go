@@ -83,7 +83,7 @@ func Args(cmdIn []string) Input {
 					os.Exit(0)
 				}
 
-				input.Password = cmdIn[index+1]
+				input.Password = strings.ToLower(cmdIn[index+1])
 
 			case "t", "-type":
 				if len(cmdIn) <= index+1 || cmdIn[index+1][0:1] == "-" {

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"runtime"
 )
 
 func InArr(s [6]string, element string) bool {
@@ -24,7 +25,15 @@ func InSclice(s []string, element string) bool {
 
 func Err(err error) {
 	if err != nil {
-		fmt.Printf("\033[91m%v", err)
+		Ansi("\033[91m")
+		fmt.Println(err)
+		Ansi("\033[0m")
+	}
+}
+
+func Ansi(str string) {
+	if runtime.GOOS != "windows" {
+		fmt.Print(str)
 	}
 }
 
