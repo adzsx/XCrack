@@ -9,7 +9,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/adzsx/xcrack/pkg/utils"
+	"github.com/adzsx/xcrack/internal/utils"
 )
 
 // Cracking with wordlists

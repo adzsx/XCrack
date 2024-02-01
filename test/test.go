@@ -6,9 +6,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/adzsx/xcrack/pkg/crack"
-	"github.com/adzsx/xcrack/pkg/list"
-	"github.com/adzsx/xcrack/pkg/utils"
+	"github.com/adzsx/xcrack/internal/crack"
+	"github.com/adzsx/xcrack/internal/list"
+	"github.com/adzsx/xcrack/internal/utils"
 )
 
 var (
