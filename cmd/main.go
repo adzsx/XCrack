@@ -7,8 +7,8 @@ import (
 
 	"github.com/adzsx/xcrack/internal/crack"
 	"github.com/adzsx/xcrack/internal/list"
+	"github.com/adzsx/xcrack/internal/test"
 	"github.com/adzsx/xcrack/internal/utils"
-	"github.com/adzsx/xcrack/test"
 )
 
 var (
