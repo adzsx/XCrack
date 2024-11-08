@@ -21,18 +21,23 @@ Modes:
 	hash:	Generates a hash from a given string
 
 Flags:
-	-p, --password 		[HASH]:   	hashed password/text to be hashed 					
-	-t, --type 		([TYPE]):	hash type, hash detection if left empty
-	-f, --file		[FILE]:		Crack hashes form file
-	-n, --numbers:				numbers						default
- 	-l, --lletters:				lowercase letters				default
+	-p, --password 		[string]:   	hashed password/text to be hashed 					
+	-w, --wordlist 		[string]:	input wordlist
+	-f, --file		[path]:		Crack hashes form file
+	-t, --type 		([string]):	hash type, hash detection if left empty
+	
+	-o, --output 		[string]:	output wordlist
+
+	-c, --characters	[string]:	use CHARS for the password
+	-l, --lletters:				lowercase letters				default
 	-L, --uletters:				uppercase letters
+	-n, --numbers:				numbers						default
 	-s, --special:				special Characters
-	-c, --characters	[CHARS]:	use CHARS for the password
-	-m, --min 		[LENGTH]:	min LENGTH of password				default: 3
-	-M, --max 		[LENGTH]:	max LENGTH of password 				default: 8
-	-w, --wordlist 		[PATH]:		input wordlist
-	-o, --output 		[PATH]:		output wordlist
+	
+	-m, --min 		[int]:		min LENGTH of password				default: 3
+	-M, --max 		[int]:		max LENGTH of password 				default: 8
+	
+	-a, --async		[int]:		number of threads to use
 
 hash-mode:
 	-r, --raw: 				Print just the hash(es)
@@ -56,9 +61,24 @@ func main() {
 
 	if input.Mode == "help" {
 		fmt.Println(help)
-
+		os.Exit(0)
 		// Crack, if possible with wordlist
-	} else if input.Mode == "version" {
+	}
+
+	fmt.Printf(`Mode:		%v
+Password:	%v
+File:		%v
+Threads:	%v
+
+Wordlist:	%v
+Output: 	%v
+Chars:		%v
+Hash:		%v
+Length:		(%v-%v)
+
+`, input.Mode, input.Password, input.File, input.Threads, strings.Join(input.Inputs, ", "), input.Output, input.Chars, input.Hash, input.Min, input.Max)
+
+	if input.Mode == "version" {
 		fmt.Println(version)
 
 	} else if input.Mode == "crack" {

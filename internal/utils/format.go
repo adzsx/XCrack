@@ -25,6 +25,7 @@ type Input struct {
 	Mode     string
 	Password string
 	File     string
+	Threads  string
 
 	// input/output for paths
 	Inputs []string
